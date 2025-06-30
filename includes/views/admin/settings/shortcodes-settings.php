@@ -1,35 +1,42 @@
- <div id="shortcodes-settings" class="ctrw-settings-section">
-                <h2>Get Shortcodes</h2>
-                
-                <div class="shortcode-group">
-                    <label>Review Form</label>
-                    <div class="ctrw-copy-input">
-                        <input type="text" value="[wp_ctrw_form]" readonly>
-                        <button class="ctrw-copy-btn">Copy</button>
-                    </div>
-                </div>
-                
-                <div class="shortcode-group">
-                    <label>Review List</label>
-                    <div class="ctrw-copy-input">
-                        <input type="text" value="[wp_ctrw_lists]" readonly>
-                        <button class="ctrw-copy-btn">Copy</button>
-                    </div>
-                </div>
-                
-                <div class="shortcode-group">
-                    <label>Review Slider</label>
-                    <div class="ctrw-copy-input">
-                        <input type="text" value="[wp_ctrw_slider]" readonly>
-                        <button class="ctrw-copy-btn">Copy</button>
-                    </div>
-                </div>
 
-                <div class="shortcode-group">
-                    <label>Review Floating widget</label>
-                    <div class="ctrw-copy-input">
-                        <input type="text" value="[wp_ctrw_widget]" readonly>
-                        <button class="ctrw-copy-btn">Copy</button>
-                    </div>
-                </div>
-</div>
+
+
+<div id="shortcodes" class="tab-content" style="display: none;">
+        <h3>Get Shortcodes</h3>
+        
+        <table class="form-table">
+            <tbody>
+                <tr>
+                    <th scope="row"><label>Review Form</label></th>
+                    <td>
+                        <input type="text" value="[wp_ctrw_form]" readonly class="regular-text">
+                        <button class="button">Copy</button>
+                    </td>
+                </tr>
+                
+                <tr>
+                    <th scope="row"><label>Review List</label></th>
+                    <td>
+                        <input type="text" value="[wp_ctrw_lists]" readonly class="regular-text">
+                        <button class="button">Copy</button>
+                    </td>
+                </tr>
+                
+                <tr>
+                    <th scope="row"><label>Review Slider</label></th>
+                    <td>
+                        <input type="text" value="[wp_ctrw_slider]" readonly class="regular-text">
+                        <button class="button">Copy</button>
+                    </td>
+                </tr>
+                
+                <tr>
+                    <th scope="row"><label>Review Floating widget</label></th>
+                    <td>
+                        <input type="text" value="[wp_ctrw_widget]" readonly class="regular-text">
+                        <button class="button">Copy</button>
+                    </td>
+                </tr>
+            </tbody>
+        </table>
+    </div>

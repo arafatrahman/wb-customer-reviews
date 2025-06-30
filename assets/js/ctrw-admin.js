@@ -1,53 +1,6 @@
-        // Simple tab switching functionality
-        document.querySelectorAll('.ctrw-settings-tabs button').forEach(button => {
-            button.addEventListener('click', () => {
-                // Remove active class from all buttons and sections
-                document.querySelectorAll('.ctrw-settings-tabs button').forEach(btn => btn.classList.remove('active'));
-                document.querySelectorAll('.ctrw-settings-section').forEach(section => section.classList.remove('active'));
-                
-                // Add active class to clicked button
-                button.classList.add('active');
-                
-                // Show corresponding section
-                const tabIndex = Array.from(document.querySelectorAll('.ctrw-settings-tabs button')).indexOf(button);
-                document.querySelectorAll('.ctrw-settings-section')[tabIndex].classList.add('active');
-            });
-        });
-
-        // Copy button functionality
-        document.querySelectorAll('.ctrw-copy-btn').forEach(button => {
-            button.addEventListener('click', () => {
-                const input = button.parentElement.querySelector('input');
-                input.select();
-                document.execCommand('copy');
-                
-                // Visual feedback
-                const originalText = button.textContent;
-                button.textContent = 'Copied!';
-                button.style.background = 'var(--success)';
-                
-                setTimeout(() => {
-                    button.textContent = originalText;
-                    button.style.background = 'var(--primary)';
-                }, 2000);
-            });
-        });
-
-        // Form reset functionality
-        document.querySelectorAll('.ctrw-reset-btn').forEach(button => {
-            button.addEventListener('click', () => {
-                const form = button.closest('form');
-                if (form) {
-                    form.reset();
-                }
-            });
-        });
-
-
-
-
 
     jQuery(document).ready(function($) {
+
         $('#general-settings').on('submit', function(e) {
             e.preventDefault();
             
@@ -233,3 +186,43 @@
 
 
     });
+
+
+
+    jQuery(document).ready(function($) {
+
+ 
+    // Tab functionality
+    $('.nav-tab-wrapper a').click(function(e) {
+        e.preventDefault();
+        
+        // Hide all tab content
+        $('.tab-content').hide();
+        
+        // Remove active class from all tabs
+        $('.nav-tab-wrapper a').removeClass('nav-tab-active');
+        
+        // Add active class to clicked tab
+        $(this).addClass('nav-tab-active');
+        
+        // Show the corresponding tab content
+        $($(this).attr('href')).show();
+    });
+    
+    // Color picker
+    $('.color-picker').wpColorPicker();
+    
+    // Copy button functionality
+    $('button:contains("Copy")').click(function() {
+        var input = $(this).prev('input');
+        input.select();
+        document.execCommand('copy');
+        
+        // Show copied feedback
+        var originalText = $(this).text();
+        $(this).text('Copied!');
+        setTimeout(function() {
+            $(this).text(originalText);
+        }.bind(this), 2000);
+    });
+});

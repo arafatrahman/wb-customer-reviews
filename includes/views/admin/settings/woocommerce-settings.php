@@ -1,41 +1,50 @@
-<?php
-$woocommerce_settings = get_option('ctrw_woocommerce_settings', array());
+ <?php
+
+$woocommerceSettings = get_option('ctrw_woocommerce_settings', array());
+
+
 ?>
-<form id="woocommerce-settings" class="ctrw-settings-section" method="post">
-    <h2>WooCommerce Integration</h2>
-    
-    <div class="toggle-group">
-        <label class="toggle-switch">
-            <input type="checkbox" name="replace_woo_reviews" <?php echo isset($woocommerce_settings['replace_woo_reviews']) && $woocommerce_settings['replace_woo_reviews'] ? 'checked' : ''; ?>>
-            <span class="slider"></span>
-            <span>Replace WooCommerce default review system</span>
-        </label>
-        
-        <label class="toggle-switch">
-            <input type="checkbox" name="show_on_product_pages" <?php echo isset($woocommerce_settings['show_on_product_pages']) && $woocommerce_settings['show_on_product_pages'] ? 'checked' : ''; ?>>
-            <span class="slider"></span>
-            <span>Show reviews on product pages</span>
-        </label>
-        
-        <label class="toggle-switch">
-            <input type="checkbox" name="verified_purchasers_only" <?php echo isset($woocommerce_settings['verified_purchasers_only']) && $woocommerce_settings['verified_purchasers_only'] ? 'checked' : ''; ?>>
-            <span class="slider"></span>
-            <span>Allow reviews only from verified purchasers</span>
-        </label>
+ 
+ 
+ <div id="woocommerce" class="tab-content" style="display: none;">
+        <h3>WooCommerce Settings</h3>
+        <form id="woocommerce-settings" method="post">
+            <table class="form-table">
+                <tbody>
+                    <tr>
+                        <th scope="row">WooCommerce Integration</th>
+                        <td>
+                            <label>
+                                <input type="checkbox" name="replace_woo_reviews" <?php checked(isset($woocommerceSettings['replace_woo_reviews']) && $woocommerceSettings['replace_woo_reviews'] === 'on'); ?>>
+                                Replace WooCommerce default review system
+                            </label><br>
+                            <label>
+                                <input type="checkbox" name="show_on_product_pages" <?php checked(isset($woocommerceSettings['show_on_product_pages']) && $woocommerceSettings['show_on_product_pages'] === 'on'); ?>>
+                                Show reviews on product pages
+                            </label><br>
+                            <label>
+                                <input type="checkbox" name="verified_purchasers_only" <?php checked(isset($woocommerceSettings['verified_purchasers_only']) && $woocommerceSettings['verified_purchasers_only'] === 'on'); ?>>
+                                Allow reviews only from verified purchasers
+                            </label>
+                        </td>
+                    </tr>
+                    
+                    <tr>
+                        <th scope="row"><label for="min_rating_display">Minimum rating to display on product page</label></th>
+                        <td>
+                            <select id="min_rating_display" name="min_rating_display" class="regular-text">
+                                <option value="0" <?php selected(isset($woocommerceSettings['min_rating_display']) ? $woocommerceSettings['min_rating_display'] : '', '0'); ?>>No minimum</option>
+                                <option value="2" <?php selected(isset($woocommerceSettings['min_rating_display']) ? $woocommerceSettings['min_rating_display'] : '', '2'); ?>>2 stars</option>
+                                <option value="3" <?php selected(isset($woocommerceSettings['min_rating_display']) ? $woocommerceSettings['min_rating_display'] : '', '3'); ?>>3 stars</option>
+                                <option value="4" <?php selected(isset($woocommerceSettings['min_rating_display']) ? $woocommerceSettings['min_rating_display'] : '', '4'); ?>>4 stars</option>
+                            </select>
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+            
+            <p class="submit">
+                <button type="submit" class="button-primary">Save WooCommerce Settings</button>
+            </p>
+        </form>
     </div>
-    
-    <div class="form-group">
-        <label>Minimum rating to display on product page</label>
-        <select class="ctrw-select" name="min_rating_display">
-            <option value="0" <?php echo (isset($woocommerce_settings['min_rating_display']) && $woocommerce_settings['min_rating_display'] == '0') ? 'selected' : ''; ?>>No minimum</option>
-            <option value="2" <?php echo (isset($woocommerce_settings['min_rating_display']) && $woocommerce_settings['min_rating_display'] == '2') ? 'selected' : ''; ?>>2 stars</option>
-            <option value="3" <?php echo (!isset($woocommerce_settings['min_rating_display']) || $woocommerce_settings['min_rating_display'] == '3') ? 'selected' : ''; ?>>3 stars</option>
-            <option value="4" <?php echo (isset($woocommerce_settings['min_rating_display']) && $woocommerce_settings['min_rating_display'] == '4') ? 'selected' : ''; ?>>4 stars</option>
-        </select>
-    </div>
-    
-    <div class="ctrw-settings-footer">
-       
-        <button type="submit" class="ctrw-save-btn">Save WooCommerce Settings</button>
-    </div>
-</form>
