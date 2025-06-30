@@ -1,3 +1,7 @@
+<?php
+
+?>
+
 <div class="wrap ctrw-setting-panel">
     <h1>Customer Review Settings</h1>
     
@@ -70,7 +74,7 @@
         $form_fields_settings = get_option('ctrw_form_fields_settings');
         ?>
         <form id="form-fields-settings" method="post">
-            <h2>Form Fields Settings</h2>
+            <h3>Form Fields Settings</h3>
             
             <div class="form-fields-grid" style="display: grid; grid-template-columns: .2fr .2fr; gap: 30px;">
                 <!-- First Column: Custom Fields -->
@@ -147,6 +151,7 @@
     <!-- DISPLAY SETTINGS -->
     <div id="display" class="tab-content" style="display: none;">
         <form id="display-settings" method="post">
+               <h3>Display Settings</h3>
             <table class="form-table">
                 <tbody>
                     <tr>
@@ -228,6 +233,7 @@
     
     <!-- WOOCOMMERCE SETTINGS -->
     <div id="woocommerce" class="tab-content" style="display: none;">
+        <h3>WooCommerce Settings</h3>
         <form id="woocommerce-settings" method="post">
             <table class="form-table">
                 <tbody>
@@ -262,6 +268,7 @@
     
     <!-- SCHEMA SETTINGS -->
     <div id="schema" class="tab-content" style="display: none;">
+        <h3>Schema Settings</h3>
         <form id="schema-settings" method="post">
             <table class="form-table">
                 <tbody>
@@ -338,7 +345,7 @@
     
     <!-- SHORTCODES -->
     <div id="shortcodes" class="tab-content" style="display: none;">
-        <h2>Get Shortcodes</h2>
+        <h3>Get Shortcodes</h3>
         
         <table class="form-table">
             <tbody>
@@ -379,6 +386,7 @@
     
     <!-- ADVANCED SETTINGS -->
     <div id="advanced" class="tab-content" style="display: none;">
+        <h3>Advanced Settings</h3>
         <form id="advanced-settings" method="post">
             <table class="form-table">
                 <tbody>
