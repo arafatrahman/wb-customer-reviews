@@ -70,10 +70,19 @@ $generalSettings = get_option('ctrw_general_settings');
                         <td>
                             <label>
                                 <input type="checkbox" name="admin_email_notifications" <?php checked(isset($generalSettings['admin_email_notifications']) && $generalSettings['admin_email_notifications'] === 'on'); ?>> Enable admin email notifications
-                            </label><br>
+                            </label> 
+                            <span class="ctrw-tooltip">
+                            <span class="dashicons dashicons-editor-help"></span>
+                            <span class="tooltiptext tooltip-right-msg">Email(s) designated under 'Advanced Settings' tab will receive a notification from each review entered in the plugins form.</span>
+                            </span>
+                            <br>
                             <label>
                                 <input type="checkbox" name="customer_email_receipts" <?php checked(isset($generalSettings['customer_email_receipts']) && $generalSettings['customer_email_receipts'] === 'on'); ?>> Enable customer email receipts
                             </label>
+                            <span class="ctrw-tooltip">
+                            <span class="dashicons dashicons-editor-help"></span>
+                            <span class="tooltiptext tooltip-right-msg">Users receive a receipt from their form submission</span>
+                            </span>
                         </td>
                     </tr>
                     
@@ -82,7 +91,11 @@ $generalSettings = get_option('ctrw_general_settings');
                         <td>
                             <label>
                                 <input type="checkbox" name="auto_approval" <?php checked(isset($generalSettings['auto_approval']) && $generalSettings['auto_approval'] === 'on'); ?>> Automatic review approval
-                            </label>
+                            </label> 
+                            <span class="ctrw-tooltip">
+                            <span class="dashicons dashicons-editor-help"></span>
+                            <span class="tooltiptext tooltip-right-msg">New reviews are immediately posted for viewing without admin review.</span>
+                            </span>
                         </td>
                     </tr>
                 </tbody>
