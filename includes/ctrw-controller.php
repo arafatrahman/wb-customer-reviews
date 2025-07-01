@@ -248,7 +248,13 @@ class CTRW_Review_Controller {
             // Remove security and action fields before saving
             $settings = $_POST;
             unset($settings['security'], $settings['action']);
-
+            // Handle checkboxes - set to 'off' if not present
+            $checkboxes = ['admin_email_notifications', 'auto_approval'];
+            foreach ($checkboxes as $checkbox) {
+                  if (!isset($settings[$checkbox])) {
+                  $settings[$checkbox] = 'off';
+                  }
+            }
             // Sanitize each setting value
             $sanitized_settings = $this->ctrw_sanitize_settings($settings);
 

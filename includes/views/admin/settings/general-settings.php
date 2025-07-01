@@ -44,7 +44,7 @@ $generalSettings = get_option('ctrw_general_settings');
                     <tr>
                         <th scope="row"><label for="reviews_per_page">Reviews per page</label></th>
                         <td>
-                            <input type="number" id="reviews_per_page" name="reviews_per_page" min="1" max="50" value="<?php echo isset($generalSettings['reviews_per_page']) ? esc_attr($generalSettings['reviews_per_page']) : '12'; ?>" class="regular-text">
+                            <input type="number" id="reviews_per_page" name="reviews_per_page" min="1" max="50" value="<?php echo isset($generalSettings['reviews_per_page']) ? esc_attr($generalSettings['reviews_per_page']) : '14'; ?>" class="regular-text">
                         </td>
                     </tr>
                     
@@ -69,7 +69,7 @@ $generalSettings = get_option('ctrw_general_settings');
                         <th scope="row">Email Settings</th>
                         <td>
                             <label>
-                                <input type="checkbox" name="admin_email_notifications" <?php checked(isset($generalSettings['admin_email_notifications']) && $generalSettings['admin_email_notifications'] === 'on'); ?>> Enable admin email notifications
+                                <input type="checkbox" name="admin_email_notifications" <?php checked(!isset($generalSettings['admin_email_notifications']) || $generalSettings['admin_email_notifications'] === 'on'); ?>> Enable admin email notifications
                             </label> 
                             <span class="ctrw-tooltip">
                             <span class="dashicons dashicons-editor-help"></span>
