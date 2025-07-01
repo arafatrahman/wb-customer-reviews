@@ -36,27 +36,6 @@
                 });
             });
         });
-        
-        // Form submission
-        document.getElementById('ctrw-reviewForm').addEventListener('submit', function(e) {
-            e.preventDefault();
-            
-            if (ctrwRatingInput.value === '0') {
-                alert('Please select a rating');
-                return;
-            }
-            
-            // Here you would typically send the data to a server
-            alert('Thank you for your review!');
-            this.reset();
-            
-            // Reset stars
-            ctrwStars.forEach(star => {
-                star.classList.remove('active');
-                star.style.color = '#e9ecef';
-            });
-            ctrwRatingInput.value = '0';
-        });
 
         // Review Slider Functionality
         const ctrwSlider = document.getElementById('ctrw-reviewSlider');
@@ -177,20 +156,14 @@
         // AJAX form submission for review form
     jQuery(document).ready(function($) {
         $('#ctrw-reviewForm').on('submit', function(e) {
-            alert();
             e.preventDefault();
-
             let formData = $(this).serialize();
-
             // Add security nonce
             formData += '&security=' + ctrw_review_form_ajax.nonce;
-
             // Add action
             formData += '&action=ctrw_submit_review';
-            console.log('Form Data:', formData); // Debugging line
-            exit();
             // Show loading indicator
-            $('.ctrw-save-btn').prop('disabled', true).text('Saving...');
+            $('.ctrw-save-btn').prop('disabled', true).text('Submiting...');
 
             // AJAX request
             $.ajax({
@@ -199,19 +172,8 @@
             data: formData,
             dataType: 'json',
             success: function(data) {
-                $('.ctrw-save-btn').prop('disabled', false).text('Submit');
-                if (data.success) {
                 alert('Thank you for your review!');
                 $('#ctrw-reviewForm')[0].reset();
-                $('.ctrw-star').removeClass('active').css('color', '#e9ecef');
-                $('#ctrw-rating').val('0');
-                } else {
-                alert(data.data || 'Submission failed. Please try again.');
-                }
-            },
-            error: function() {
-                $('.ctrw-save-btn').prop('disabled', false).text('Submit');
-                alert('Submission failed. Please try again.');
             }
             });
         });

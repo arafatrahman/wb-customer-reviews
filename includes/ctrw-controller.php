@@ -20,6 +20,9 @@ class CTRW_Review_Controller {
         
         // Register activation hook to create database table
         register_activation_hook(CTRW_PLUGIN_FILE, [$this, 'ctrw_create_reviews_table']);
+        // Register deactivation hook to perform cleanup tasks
+        register_uninstall_hook(CTRW_PLUGIN_FILE, ['CTRW_Review_Controller', 'ctrw_on_uninstall']);
+       
 
 
 
@@ -196,6 +199,62 @@ class CTRW_Review_Controller {
             require_once(ABSPATH . 'wp-admin/includes/upgrade.php');
             dbDelta($sql);
       }
+
+      // Plugin deactivation cleanup tasks
+      public function ctrw_on_deactivation() {
+            // Optionally remove options or perform other cleanup
+            delete_option('ctrw_general_settings');
+            delete_option('ctrw_form_fields_settings');
+            delete_option('ctrw_display_settings');
+            delete_option('ctrw_woocommerce_settings');
+            delete_option('ctrw_schema_settings');
+            delete_option('ctrw_advanced_settings');
+
+            global $wpdb;
+            $table_name = $wpdb->prefix . 'ctrw_reviews';
+            $wpdb->query("DROP TABLE IF EXISTS $table_name");
+      }
+
+      public function ctrw_on_deactivation() {
+      // Check if we're in WordPress and user has permissions
+      if (!defined('WP_UNINSTALL_PLUGIN')) {
+            return;
+      }
+
+      // Security check - ensure user has capability to delete plugins
+      if (!current_user_can('delete_plugins')) {
+            return;
+      }
+
+      // Remove all plugin options
+      $options = [
+            'ctrw_general_settings',
+            'ctrw_form_fields_settings',
+            'ctrw_display_settings',
+            'ctrw_woocommerce_settings',
+            'ctrw_schema_settings',
+            'ctrw_advanced_settings',
+            // Add any other options here
+      ];
+
+      foreach ($options as $option) {
+            delete_option($option);
+            // Also delete site options in case of multisite
+            delete_site_option($option);
+      }
+
+      // Remove custom database tables
+      global $wpdb;
+      $tables = [
+            $wpdb->prefix . 'ctrw_reviews',
+            // Add any other custom tables here
+      ];
+
+      foreach ($tables as $table) {
+            $wpdb->query("DROP TABLE IF EXISTS {$table}");
+      }
+      }
+
 
       // Save General Settings
       public function ctrw_save_general_settings() {
@@ -378,11 +437,7 @@ class CTRW_Review_Controller {
             $review = isset($_POST['ctrw_review']) ? sanitize_textarea_field($_POST['ctrw_review']) : '';
             $rating = isset($_POST['ctrw_rating']) ? intval($_POST['ctrw_rating']) : 0;
             $ctrw_page_id = isset($_POST['ctrw_page_id']) ? intval($_POST['ctrw_page_id']) : 0;
-            
-            // Validate required fields
-            if (empty($name) || empty($email) || empty($review) || $rating <= 0) {
-                  wp_send_json_error(array('message' => __('Please fill in all required fields.', 'wp_cr')));
-            }     
+
             // Prepare the review data
             $review_data = array(
                   'name' => $name,
@@ -398,8 +453,7 @@ class CTRW_Review_Controller {
                   'date' => current_time('mysql'),
             );   
 
-            print_r($review_data); // Debugging line to check review data
-            exit; // Exit to stop further execution for debugging
+         
 
             // Insert the review into the database
             $result = $this->ctrw_save_review($review_data);

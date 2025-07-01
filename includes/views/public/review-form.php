@@ -18,7 +18,7 @@
 
                 <div class="ctrw-form-group">
                     <label for="ctrw-phone" class="ctrw-form-label">Phone Number</label>
-                    <input type="tel" id="ctrw-phone" name="ctrw_phone" class="ctrw-form-control" pattern="[0-9+\-\s()]{7,20}" maxlength="20">
+                    <input type="tel" id="ctrw-phone" name="ctrw_phone" class="ctrw-form-control" maxlength="20">
                 </div>
 
                 <div class="ctrw-form-group">
