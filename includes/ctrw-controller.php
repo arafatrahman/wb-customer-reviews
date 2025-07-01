@@ -200,21 +200,6 @@ class CTRW_Review_Controller {
             dbDelta($sql);
       }
 
-      // Plugin deactivation cleanup tasks
-      public function ctrw_on_deactivation() {
-            // Optionally remove options or perform other cleanup
-            delete_option('ctrw_general_settings');
-            delete_option('ctrw_form_fields_settings');
-            delete_option('ctrw_display_settings');
-            delete_option('ctrw_woocommerce_settings');
-            delete_option('ctrw_schema_settings');
-            delete_option('ctrw_advanced_settings');
-
-            global $wpdb;
-            $table_name = $wpdb->prefix . 'ctrw_reviews';
-            $wpdb->query("DROP TABLE IF EXISTS $table_name");
-      }
-
       public function ctrw_on_deactivation() {
       // Check if we're in WordPress and user has permissions
       if (!defined('WP_UNINSTALL_PLUGIN')) {
