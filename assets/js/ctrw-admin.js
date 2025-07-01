@@ -223,6 +223,6 @@
         $(this).text('Copied!');
         setTimeout(function() {
             $(this).text(originalText);
-        }.bind(this), 2000);
+        }.bind(this), 800);
     });
 });

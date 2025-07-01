@@ -1,13 +1,13 @@
-// Rating stars interaction
-        const stars = document.querySelectorAll('.star');
-        const ratingInput = document.getElementById('rating');
+ // Rating stars interaction
+        const ctrwStars = document.querySelectorAll('.ctrw-star');
+        const ctrwRatingInput = document.getElementById('ctrw-rating');
         
-        stars.forEach(star => {
+        ctrwStars.forEach(star => {
             star.addEventListener('click', () => {
                 const rating = star.getAttribute('data-rating');
-                ratingInput.value = rating;
+                ctrwRatingInput.value = rating;
                 
-                stars.forEach((s, index) => {
+                ctrwStars.forEach((s, index) => {
                     if (index < rating) {
                         s.classList.add('active');
                     } else {
@@ -19,7 +19,7 @@
             star.addEventListener('mouseover', () => {
                 const rating = star.getAttribute('data-rating');
                 
-                stars.forEach((s, index) => {
+                ctrwStars.forEach((s, index) => {
                     if (index < rating) {
                         s.style.color = '#f8961e';
                     }
@@ -27,9 +27,9 @@
             });
             
             star.addEventListener('mouseout', () => {
-                const currentRating = ratingInput.value;
+                const currentRating = ctrwRatingInput.value;
                 
-                stars.forEach((s, index) => {
+                ctrwStars.forEach((s, index) => {
                     if (index >= currentRating) {
                         s.style.color = '#e9ecef';
                     }
@@ -38,10 +38,10 @@
         });
         
         // Form submission
-        document.getElementById('reviewForm').addEventListener('submit', function(e) {
+        document.getElementById('ctrw-reviewForm').addEventListener('submit', function(e) {
             e.preventDefault();
             
-            if (ratingInput.value === '0') {
+            if (ctrwRatingInput.value === '0') {
                 alert('Please select a rating');
                 return;
             }
@@ -51,22 +51,22 @@
             this.reset();
             
             // Reset stars
-            stars.forEach(star => {
+            ctrwStars.forEach(star => {
                 star.classList.remove('active');
                 star.style.color = '#e9ecef';
             });
-            ratingInput.value = '0';
+            ctrwRatingInput.value = '0';
         });
 
         // Review Slider Functionality
-        const slider = document.getElementById('reviewSlider');
-        const dots = document.querySelectorAll('.slider-dot');
-        let currentSlide = 0;
+        const ctrwSlider = document.getElementById('ctrw-reviewSlider');
+        const ctrwDots = document.querySelectorAll('.ctrw-slider-dot');
+        let ctrwCurrentSlide = 0;
 
         // Update slider dots
-        function updateDots() {
-            dots.forEach((dot, index) => {
-                if (index === currentSlide) {
+        function ctrwUpdateDots() {
+            ctrwDots.forEach((dot, index) => {
+                if (index === ctrwCurrentSlide) {
                     dot.classList.add('active');
                 } else {
                     dot.classList.remove('active');
@@ -75,102 +75,145 @@
         }
 
         // Scroll to slide
-        function goToSlide(index) {
-            const slideWidth = document.querySelector('.review-slide').offsetWidth;
-            slider.scrollTo({
+        function ctrwGoToSlide(index) {
+            const slideWidth = document.querySelector('.ctrw-review-slide').offsetWidth;
+            ctrwSlider.scrollTo({
                 left: index * (slideWidth + 20), // 20px gap
                 behavior: 'smooth'
             });
-            currentSlide = index;
-            updateDots();
+            ctrwCurrentSlide = index;
+            ctrwUpdateDots();
         }
 
         // Dot click events
-        dots.forEach(dot => {
+        ctrwDots.forEach(dot => {
             dot.addEventListener('click', () => {
                 const slideIndex = parseInt(dot.getAttribute('data-slide'));
-                goToSlide(slideIndex);
+                ctrwGoToSlide(slideIndex);
             });
         });
 
         // Auto-scroll slider
-        let autoScroll = setInterval(() => {
-            currentSlide = (currentSlide + 1) % dots.length;
-            goToSlide(currentSlide);
+        let ctrwAutoScroll = setInterval(() => {
+            ctrwCurrentSlide = (ctrwCurrentSlide + 1) % ctrwDots.length;
+            ctrwGoToSlide(ctrwCurrentSlide);
         }, 5000);
 
         // Pause auto-scroll on hover
-        slider.addEventListener('mouseenter', () => {
-            clearInterval(autoScroll);
+        ctrwSlider.addEventListener('mouseenter', () => {
+            clearInterval(ctrwAutoScroll);
         });
 
-        slider.addEventListener('mouseleave', () => {
-            autoScroll = setInterval(() => {
-                currentSlide = (currentSlide + 1) % dots.length;
-                goToSlide(currentSlide);
+        ctrwSlider.addEventListener('mouseleave', () => {
+            ctrwAutoScroll = setInterval(() => {
+                ctrwCurrentSlide = (ctrwCurrentSlide + 1) % ctrwDots.length;
+                ctrwGoToSlide(ctrwCurrentSlide);
             }, 5000);
         });
 
         // Floating Reviews Toggle
-        const floatingBtn = document.getElementById('floatingBtn');
-        const floatingReviews = document.getElementById('floatingReviews');
-        const closeFloating = document.getElementById('closeFloating');
+        const ctrwFloatingBtn = document.getElementById('ctrw-floatingBtn');
+        const ctrwFloatingReviews = document.getElementById('ctrw-floatingReviews');
+        const ctrwCloseFloating = document.getElementById('ctrw-closeFloating');
 
-        floatingBtn.addEventListener('click', () => {
-            floatingReviews.classList.toggle('show');
+        ctrwFloatingBtn.addEventListener('click', () => {
+            ctrwFloatingReviews.classList.toggle('show');
         });
 
-        closeFloating.addEventListener('click', () => {
-            floatingReviews.classList.remove('show');
+        ctrwCloseFloating.addEventListener('click', () => {
+            ctrwFloatingReviews.classList.remove('show');
         });
 
         // Close floating reviews when clicking outside
         document.addEventListener('click', (e) => {
-            if (!floatingReviews.contains(e.target) && e.target !== floatingBtn) {
-                floatingReviews.classList.remove('show');
+            if (!ctrwFloatingReviews.contains(e.target) && e.target !== ctrwFloatingBtn) {
+                ctrwFloatingReviews.classList.remove('show');
             }
         });
 
         // View Toggle Functionality
-        const viewOptions = document.querySelectorAll('.view-option');
-        const reviewLists = {
-            standard: document.querySelector('.review-list.standard'),
-            slider: document.querySelector('.review-list.slider'),
-            floating: document.querySelector('.review-list.floating')
+        const ctrwViewOptions = document.querySelectorAll('.ctrw-view-option');
+        const ctrwReviewLists = {
+            standard: document.querySelector('.ctrw-review-list.standard'),
+            slider: document.querySelector('.ctrw-review-list.slider'),
+            floating: document.querySelector('.ctrw-review-list.floating')
         };
 
-        viewOptions.forEach(option => {
+        ctrwViewOptions.forEach(option => {
             option.addEventListener('click', () => {
                 // Update active state
-                viewOptions.forEach(opt => opt.classList.remove('active'));
+                ctrwViewOptions.forEach(opt => opt.classList.remove('active'));
                 option.classList.add('active');
                 
                 // Get selected view
                 const view = option.getAttribute('data-view');
                 
                 // Hide all review lists
-                Object.values(reviewLists).forEach(list => {
+                Object.values(ctrwReviewLists).forEach(list => {
                     if (list) list.style.display = 'none';
                 });
                 
                 // Show selected view
-                if (reviewLists[view]) {
-                    reviewLists[view].style.display = 'block';
+                if (ctrwReviewLists[view]) {
+                    ctrwReviewLists[view].style.display = 'block';
                     
                     // Special handling for slider view
                     if (view === 'slider') {
                         // Reset slider position
-                        goToSlide(0);
+                        ctrwGoToSlide(0);
                     }
                 }
                 
                 // Special handling for floating view
                 if (view === 'floating') {
-                    floatingBtn.click(); // Open the floating panel
+                    ctrwFloatingBtn.click(); // Open the floating panel
                 }
             });
         });
 
         // Initialize with standard view
-        reviewLists.slider.style.display = 'none';
-        reviewLists.floating.style.display = 'none';
+        ctrwReviewLists.slider.style.display = 'none';
+        ctrwReviewLists.floating.style.display = 'none';
+        // AJAX form submission for review form
+    jQuery(document).ready(function($) {
+        $('#ctrw-reviewForm').on('submit', function(e) {
+            alert();
+            e.preventDefault();
+
+            let formData = $(this).serialize();
+
+            // Add security nonce
+            formData += '&security=' + ctrw_review_form_ajax.nonce;
+
+            // Add action
+            formData += '&action=ctrw_submit_review';
+            console.log('Form Data:', formData); // Debugging line
+            exit();
+            // Show loading indicator
+            $('.ctrw-save-btn').prop('disabled', true).text('Saving...');
+
+            // AJAX request
+            $.ajax({
+            type: 'POST',
+            url: ctrw_review_form_ajax.ajax_url,
+            data: formData,
+            dataType: 'json',
+            success: function(data) {
+                $('.ctrw-save-btn').prop('disabled', false).text('Submit');
+                if (data.success) {
+                alert('Thank you for your review!');
+                $('#ctrw-reviewForm')[0].reset();
+                $('.ctrw-star').removeClass('active').css('color', '#e9ecef');
+                $('#ctrw-rating').val('0');
+                } else {
+                alert(data.data || 'Submission failed. Please try again.');
+                }
+            },
+            error: function() {
+                $('.ctrw-save-btn').prop('disabled', false).text('Submit');
+                alert('Submission failed. Please try again.');
+            }
+            });
+        });
+    });
+

@@ -8,7 +8,7 @@ $displaySettings = get_option('ctrw_display_settings', array());
             <table class="form-table">
                 <tbody>
                     <tr>
-                        <th scope="row">Display Options</th>
+                        <th scope="row">Review Display Options</th>
                         <td>
                             <label>
                                 <input type="checkbox" name="show_city" <?php checked(isset($displaySettings['show_city']) && $displaySettings['show_city'] === 'on'); ?>>

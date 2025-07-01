@@ -23,6 +23,7 @@ if (!defined('ABSPATH')) {
 define('CTRW_PLUGIN_PATH', plugin_dir_path(__FILE__));
 define('CTRW_PLUGIN_ASSETS', plugin_dir_url(__FILE__) . 'assets/');
 define('CTRW_BASE_NAME', plugin_basename(__FILE__));
+define('CTRW_PLUGIN_FILE', __FILE__);
 
 // Include the main controller
 require_once CTRW_PLUGIN_PATH . 'includes/ctrw-controller.php';

@@ -34,7 +34,7 @@
    <?php include __DIR__ . '/woocommerce-settings.php'; ?>
     
     <!-- SCHEMA SETTINGS -->
-    <?php include __DIR__ . '/woocommerce-settings.php'; ?>
+    <?php include __DIR__ . '/schema-settings.php'; ?>
 
     
     <!-- SHORTCODES -->

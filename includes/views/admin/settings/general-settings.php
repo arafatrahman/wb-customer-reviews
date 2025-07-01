@@ -11,12 +11,36 @@ $generalSettings = get_option('ctrw_general_settings');
                 <tbody>
 
                     <tr>
-                        <th scope="row"><label for="enable_review_form">Enable Review Form</label></th>
+                        <th scope="row">Display Options</th>
                         <td>
-                            <input type="checkbox" id="enable_review_form" name="enable_review_form" <?php checked(isset($generalSettings['enable_review_form']) && $generalSettings['enable_review_form'] === 'on'); ?>>
-                            <span class="description">Allow customers to submit reviews using the review form.</span>
+                           
+                            <label>
+                                <input type="checkbox" id="enable_review_summary" name="enable_review_summary" <?php checked(isset($generalSettings['enable_review_summary']) && $generalSettings['enable_review_summary'] === 'on'); ?>>
+                                Display a summary of reviews on the site.
+                            </label>
+                            <br>
+                             <label>
+                                <input type="checkbox" id="enable_review_form" name="enable_review_form" <?php checked(isset($generalSettings['enable_review_form']) && $generalSettings['enable_review_form'] === 'on'); ?>>
+                                Allow customers to submit reviews using the review form.
+                            </label><br>
+                            <label>
+                                <input type="checkbox" id="enable_review_list" name="enable_review_list" <?php checked(isset($generalSettings['enable_review_list']) && $generalSettings['enable_review_list'] === 'on'); ?>>
+                                Display a list of reviews on the site.
+                            </label>
+                            <br>
+                            <label>
+                                <input type="checkbox" id="enable_floating_reviews" name="enable_floating_reviews" <?php checked(isset($generalSettings['enable_floating_reviews']) && $generalSettings['enable_floating_reviews'] === 'on'); ?>>
+                                Display floating reviews widget on the site.
+                            </label>
+                            <br>
+                            <label>
+                                <input type="checkbox" id="enable_slider_reviews" name="enable_slider_reviews" <?php checked(isset($generalSettings['enable_slider_reviews']) && $generalSettings['enable_slider_reviews'] === 'on'); ?>>
+                                Display slider reviews widget on the site.
+                            </label>
+
                         </td>
                     </tr>
+
                     <tr>
                         <th scope="row"><label for="reviews_per_page">Reviews per page</label></th>
                         <td>

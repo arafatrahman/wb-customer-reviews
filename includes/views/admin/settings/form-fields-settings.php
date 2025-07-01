@@ -46,9 +46,10 @@ $form_fields_settings = get_option('ctrw_form_fields_settings');
                    
                     <?php
                     $special_fields = [
-                        ['label' => 'Review Title', 'index' => 5],
-                        ['label' => 'Comment', 'index' => 6],
-                        ['label' => 'Rating', 'index' => 7],
+                        ['label' => 'State', 'index' => 5],
+                        ['label' => 'Review Title', 'index' => 6],
+                        ['label' => 'Comment', 'index' => 7],
+                        ['label' => 'Rating', 'index' => 8],
                     ];
                     
                     foreach ($special_fields as $field) {
