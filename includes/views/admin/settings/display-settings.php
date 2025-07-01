@@ -91,6 +91,7 @@ $displaySettings = get_option('ctrw_display_settings', array());
                                 <option value="slider" <?php selected(isset($displaySettings['review_display_type']) ? $displaySettings['review_display_type'] : '', 'slider'); ?>>Review Slider</option>
                                 <option value="floating" <?php selected(isset($displaySettings['review_display_type']) ? $displaySettings['review_display_type'] : '', 'floating'); ?>>Review Widget</option>
                             </select>
+                            <p id="review_display_info"></p>
                         </td>
                     </tr>
                 </tbody>

@@ -225,4 +225,24 @@
             $(this).text(originalText);
         }.bind(this), 800);
     });
+
+    $('#review_display_type').on('change', function() {
+        var infoText = '';
+        switch ($(this).val()) {
+            case 'list':
+                infoText = 'Displays reviews in a standard list format.';
+                break;
+            case 'slider':
+                infoText = 'Displays reviews in a slider/carousel format.';
+                break;
+            case 'floating':
+                infoText = 'Displays reviews in a floating widget on the page.';
+                break;
+        }
+        $('#review_display_info').text(infoText);
+    });
+
+    // Trigger info on page load if a value is already selected
+    $('#review_display_type').trigger('change');
+
 });
