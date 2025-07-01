@@ -170,7 +170,7 @@ class CTRW_Review_Controller {
             wp_enqueue_script('ctrw-review-frontend-script', CTRW_PLUGIN_ASSETS . 'js/ctrw-frontend.js', array('jquery'), '1.0.0', true);
             
             // Localize script to pass AJAX URL and nonce
-            wp_localize_script('crtw-review-ajax', 'ctrw_review_form_ajax', ['ajax_url' => admin_url('admin-ajax.php') , 'nonce' => wp_create_nonce('ctrw_review_form_nonce')]);
+            wp_localize_script('ctrw-review-frontend-script', 'ctrw_review_form_ajax', ['ajax_url' => admin_url('admin-ajax.php') , 'nonce' => wp_create_nonce('ctrw_review_form_nonce')]);
       }
 
       // Create the reviews table on plugin activation
@@ -397,6 +397,9 @@ class CTRW_Review_Controller {
                   'page_id' => $ctrw_page_id,
                   'date' => current_time('mysql'),
             );   
+
+            print_r($review_data); // Debugging line to check review data
+            exit; // Exit to stop further execution for debugging
 
             // Insert the review into the database
             $result = $this->ctrw_save_review($review_data);
