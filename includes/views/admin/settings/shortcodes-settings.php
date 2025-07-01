@@ -13,7 +13,14 @@
                         <button class="button">Copy</button>
                     </td>
                 </tr>
-                
+                <tr>
+                    <th scope="row"><label>Review Summary</label></th>
+                    <td>
+                        <input type="text" value="[wp_ctrw_summary]" readonly class="regular-text">
+                        <button class="button">Copy</button>
+                    </td>
+                </tr>
+
                 <tr>
                     <th scope="row"><label>Review List</label></th>
                     <td>

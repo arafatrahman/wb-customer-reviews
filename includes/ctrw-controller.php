@@ -15,6 +15,9 @@ class CTRW_Review_Controller {
         add_action('admin_menu', [$this, 'add_admin_menu']);
         add_action('admin_enqueue_scripts', [$this,'crtw_enqueue_scripts']);
         
+        // Enqueue scripts and styles for the frontend
+        add_action('wp_enqueue_scripts', [$this, 'crtw_enqueue_scripts']);
+
         // SAVE GENERAL SETTINGS
         add_action('wp_ajax_ctrw_save_general_settings', [$this, 'ctrw_save_general_settings']);
         add_action('wp_ajax_nopriv_ctrw_save_general_settings', [$this, 'ctrw_save_general_settings']);
@@ -38,6 +41,10 @@ class CTRW_Review_Controller {
         //SAVE ADVANCED SETTINGS
         add_action('wp_ajax_ctrw_save_advanced_settings', [$this, 'ctrw_save_advanced_settings']);
         add_action('wp_ajax_nopriv_ctrw_save_advanced_settings', [$this, 'ctrw_save_advanced_settings']);
+
+
+       // Register [wp_ctrw_form] shortcode
+       add_shortcode('wp_ctrw_form', [$this, 'ctrw_render_review_form']);
       
       }
 
@@ -124,14 +131,30 @@ class CTRW_Review_Controller {
 
             $screen = get_current_screen();
             if ($screen && $screen->id !== 'reviews_page_ctrw-settings') {
-                  return;
+           
+                  wp_enqueue_style('ctrw-review-style', CTRW_PLUGIN_ASSETS . 'css/ctrw-admin.css', array(), '1.0.0');
+                  wp_enqueue_script('ctrw-review-script', CTRW_PLUGIN_ASSETS . 'js/ctrw-admin.js', array('jquery'), '1.0.0', true);
+                  wp_localize_script('ctrw-review-script', 'ctrw_admin_ajax', array(
+                  'ajax_url' => admin_url('admin-ajax.php'),
+                  'nonce' => wp_create_nonce('ctrw_review_nonce')
+                  ));
             }
-            wp_enqueue_style('ctrw-review-style', CTRW_PLUGIN_ASSETS . 'css/ctrw-admin.css', array(), '1.0.0');
-            wp_enqueue_script('ctrw-review-script', CTRW_PLUGIN_ASSETS . 'js/ctrw-admin.js', array('jquery'), '1.0.0', true);
-            wp_localize_script('ctrw-review-script', 'ctrw_admin_ajax', array(
-                'ajax_url' => admin_url('admin-ajax.php'),
-                'nonce' => wp_create_nonce('ctrw_review_nonce')
-            ));
+
+            // Enqueue frontend styles and scripts only on the frontend
+            if (!is_admin() && is_singular()) {
+                  $post = get_post();
+                  if (
+                        has_shortcode($post->post_content, 'wp_ctrw_form') ||
+                        has_shortcode($post->post_content, 'wp_ctrw_summary') ||
+                        has_shortcode($post->post_content, 'wp_ctrw_lists') ||
+                        has_shortcode($post->post_content, 'wp_ctrw_slider') ||
+                        has_shortcode($post->post_content, 'wp_ctrw_widget')
+                  ) {
+                        wp_enqueue_style('ctrw-review-frontend-style', CTRW_PLUGIN_ASSETS . 'css/ctrw-style.css', array(), '1.0.0');
+                        wp_enqueue_script('ctrw-review-frontend-script', CTRW_PLUGIN_ASSETS . 'js/ctrw-frontend.js', array('jquery'), '1.0.0', true);
+                  }
+            }
+            
       }
 
       // Save General Settings
@@ -226,6 +249,21 @@ class CTRW_Review_Controller {
             }
             return $sanitized_settings;
       }
+
+      // Render the review form shortcode
+      public function ctrw_render_review_form($atts) {
+            // Check if the form is enabled
+            $general_settings = get_option('ctrw_general_settings', array());
+            if (isset($general_settings['enable_review_form']) && $general_settings['enable_review_form'] === 'on') {
+                  // Include the form template
+                  ob_start();
+                  include CTRW_PLUGIN_PATH . 'includes/views/public/review-form.php';
+                  return ob_get_clean();
+            } else {
+                  return '<p>' . __('The review form is currently disabled.', 'wp_cr') . '</p>';
+            }     
+      }
+
             
 
 

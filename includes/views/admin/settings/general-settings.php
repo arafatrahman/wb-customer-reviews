@@ -9,6 +9,14 @@ $generalSettings = get_option('ctrw_general_settings');
             <h3>General Settings</h3>
             <table class="form-table">
                 <tbody>
+
+                    <tr>
+                        <th scope="row"><label for="enable_review_form">Enable Review Form</label></th>
+                        <td>
+                            <input type="checkbox" id="enable_review_form" name="enable_review_form" <?php checked(isset($generalSettings['enable_review_form']) && $generalSettings['enable_review_form'] === 'on'); ?>>
+                            <span class="description">Allow customers to submit reviews using the review form.</span>
+                        </td>
+                    </tr>
                     <tr>
                         <th scope="row"><label for="reviews_per_page">Reviews per page</label></th>
                         <td>
