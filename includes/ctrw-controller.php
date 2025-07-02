@@ -275,18 +275,41 @@ class CTRW_Review_Controller {
             update_option('ctrw_form_fields_settings', $sanitized_settings);
       }
 
-      // Save Display Settings
+      /**
+       * Save Display Settings via AJAX
+       */
       public function ctrw_save_display_settings() {
-            // Check nonce for security
-            check_ajax_referer('ctrw_review_nonce', 'security');
-            // Remove security and action fields before saving
-            $settings = $_POST;
-            unset($settings['security'], $settings['action']);
-            // Sanitize each setting value
-            $sanitized_settings = $this->ctrw_sanitize_settings($settings);
-            // Save settings as an option
-            update_option('ctrw_display_settings', $sanitized_settings);
+      // Verify nonce
+      check_ajax_referer('ctrw_review_nonce', 'security');
+      
+      // Initialize settings array
+      $settings = array();
+      
+      // Checkboxes
+      $settings['show_city'] = isset($_POST['show_city']) ? 'on' : 'off';
+      $settings['show_state'] = isset($_POST['show_state']) ? 'on' : 'off';
+      $settings['enable_titles'] = isset($_POST['enable_titles']) ? 'on' : 'off';
+      $settings['show_time_with_date'] = isset($_POST['show_time_with_date']) ? 'on' : 'off';
+      
+      // Font settings
+      $settings['name_font_weight'] = sanitize_text_field($_POST['name_font_weight'] ?? 'normal');
+      $settings['comment_font_size'] = isset($_POST['comment_font_size']) ? absint($_POST['comment_font_size']) : 14;
+      $settings['comment_font_style'] = sanitize_text_field($_POST['comment_font_style'] ?? 'normal');
+      $settings['comment_line_height'] = isset($_POST['comment_line_height']) ? absint($_POST['comment_line_height']) : 20;
+      
+      // Colors
+      $settings['star_color'] = sanitize_hex_color($_POST['star_color'] ?? '#ffb100');
+      $settings['comment_box_color'] = sanitize_hex_color($_POST['comment_box_color'] ?? '#f5f5f5');
+      
+      // Display type
+      $settings['review_display_type'] = sanitize_text_field($_POST['review_display_type'] ?? 'list');
+      
+      // Save settings
+      update_option('ctrw_display_settings', $settings);
+      
+      wp_send_json_success();
       }
+
 
       // Save WooCommerce Settings
       public function ctrw_save_woocommerce_settings() {
