@@ -82,7 +82,7 @@
             </div>
         </div>
         <div style="margin-top:20px;">
-            <button type="submit" id="update-customer-review" class="button button-primary">Update Review</button>
+            <button type="submit" id="update-customer-review" class="button button-primary" >Update Review</button>
             <button type="button" class="button" id="close-edit-review-popup">Cancel</button>
         </div>
     </form>

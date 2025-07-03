@@ -39,7 +39,7 @@ class CTRW_Review_View {
         'trash' => 'Trash'
     ];
     echo '<h1 class="wp-heading-inline">Customer Reviews</h1>
-    <button type="button" class="button edit-review" data-update-type="add">Add Customer Reviews</button>
+    <button type="button" class="button add-ctrw-review" data-update-type="add">Add Customer Reviews</button>
     <button type="button" class="button import-review" id="import-customer-reviews">Import Customer Reviews</button>
     <hr class="wp-header-end">';
 

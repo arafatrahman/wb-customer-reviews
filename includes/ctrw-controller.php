@@ -79,6 +79,10 @@ class CTRW_Review_Controller {
       add_action('wp_ajax_ctrw_submit_review', [$this, 'ctrw_submit_review']);
       add_action('wp_ajax_nopriv_ctrw_submit_review', [$this, 'ctrw_submit_review']);
       
+      add_action('wp_ajax_get_review_data', [$this, 'ctrw_handle_get_review_data']);
+
+      // AJAX handler to update a review
+      add_action('wp_ajax_update_ctrw_review', [$this, 'ctrw_update_review']);
       
       }
 
@@ -172,7 +176,7 @@ class CTRW_Review_Controller {
 
 
             $screen = get_current_screen();
-            if ($screen && $screen->id == 'reviews_page_ctrw-settings' || $screen->id == 'toplevel_page_ctrw-customer-reviews') {
+            if ($screen && $screen->id == 'reviews_page_ctrw-settings') {
            
                   wp_enqueue_style('ctrw-review-style', CTRW_PLUGIN_ASSETS . 'css/ctrw-admin.css', array(), '1.0.0');
                   wp_enqueue_script('ctrw-review-script', CTRW_PLUGIN_ASSETS . 'js/ctrw-admin.js', array('jquery'), '1.0.0', true);
@@ -181,7 +185,15 @@ class CTRW_Review_Controller {
                   'nonce' => wp_create_nonce('ctrw_review_nonce')
                   ));
                   
-            } 
+            }
+            
+             if ($screen && $screen->id == 'toplevel_page_ctrw-customer-reviews') {
+                  wp_enqueue_script('ctrw-datatable-script', CTRW_PLUGIN_ASSETS . 'js/ctrw-datatable.js', array('jquery'), '1.0.0', true);
+                  wp_localize_script('ctrw-datatable-script', 'ctrw_datatable_ajax', array(
+                        'ajax_url' => admin_url('admin-ajax.php'),
+                        'nonce' => wp_create_nonce('ctrw_datatable_nonce') // Make sure this matches what you check
+                  ));
+             }
             
       }
 
@@ -506,8 +518,102 @@ class CTRW_Review_Controller {
             return $result !== false;
       }
 
+      public function ctrw_handle_get_review_data() {
+            // Check nonce and user capabilities
+            if (!check_ajax_referer('ctrw_datatable_nonce', 'security', false)) {
+                  wp_send_json_error('Invalid nonce', 403);
+            }
+            
+            if (!current_user_can('manage_options')) {
+                  wp_send_json_error('Unauthorized', 401);
+            }
+
+            $review_id = intval($_POST['review_id']);
+            
+            // Get review data from database
+            global $wpdb;
+            $table_name = $wpdb->prefix . 'ctrw_reviews';
+            $review = $wpdb->get_row($wpdb->prepare(
+                  "SELECT * FROM $table_name WHERE id = %d", 
+                  $review_id
+            ), ARRAY_A);
+            
+            if ($review) {
+                  wp_send_json_success($review);
+            } else {
+                  wp_send_json_error('Review not found');
+            }
+
+      }
+
+
+      public function ctrw_update_review() {
+            // Verify nonce and capabilities
+            if (!check_ajax_referer('ctrw_datatable_nonce', 'security', false)) {
+                  wp_send_json_error('Invalid nonce', 403);
+            }
+
+            if (isset($_POST['update_type']) && $_POST['update_type'] == 'update') {
+                  $review_id = isset($_POST['id']) ? intval($_POST['id']) : 0;
+                  if (!$review_id) {
+                              wp_send_json_error('Invalid review ID');
+                  }
+            }
+
+
+
+            $fields = [
+                  'name'        => isset($_POST['name']) ? sanitize_text_field($_POST['name']) : '',
+                  'email'       => isset($_POST['email']) ? sanitize_email($_POST['email']) : '',
+                  'phone'       => isset($_POST['phone']) ? sanitize_text_field($_POST['phone']) : '',
+                  'website'     => isset($_POST['website']) ? esc_url_raw($_POST['website']) : '',
+                  'city'        => isset($_POST['city']) ? sanitize_text_field($_POST['city']) : '',
+                  'state'       => isset($_POST['state']) ? sanitize_text_field($_POST['state']) : '',
+                  'title'       => isset($_POST['title']) ? sanitize_text_field($_POST['title']) : '',
+                  'review'      => isset($_POST['review']) ? wp_kses_post($_POST['review']) : '',
+                  'rating'      => isset($_POST['rating']) ? intval($_POST['rating']) : 0,
+                  'page_id'     => isset($_POST['positionid']) ? intval($_POST['positionid']) : 0,
+                  'status'      => isset($_POST['status']) ? sanitize_text_field($_POST['status']) : 'pending',
+            ];
+
+            // Filter empty fields
+            $update_data = array_filter($fields, function($v) { 
+                  return $v !== '' && $v !== null; 
+            });
+
+            global $wpdb;
+            $table_name = $wpdb->prefix . 'ctrw_reviews';
+
+            if ($update_type === 'add') {
+
+                  $result = $wpdb->update(
+                        $table_name,
+                        $update_data,
+                        ['id' => $review_id]
+                  );
+
+                  if ($result === false) {
+                        wp_send_json_error('Failed to update review: ' . $wpdb->last_error);
+                  }
+                  wp_send_json_success('Review updated successfully');
+            }
+            else {
+
+
+                  $insert_data = $fields;
+                  $insert_data['date'] = current_time('mysql');
+                  
+                  $result = $wpdb->insert($table_name, $insert_data);
+                  if ($result === false) {
+                        wp_send_json_error('Failed to add review: ' . $wpdb->last_error);
+                  }
+                  wp_send_json_success(['message' => 'Review added successfully', 'id' => $wpdb->insert_id]);
+            }
+
+      }
 }
 
 
 new CTRW_Review_Controller();
 ?>
+
