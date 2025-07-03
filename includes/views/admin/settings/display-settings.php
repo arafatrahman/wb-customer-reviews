@@ -39,19 +39,38 @@ wp_enqueue_script('wp-color-picker');
                         <label>
                             <input type="checkbox" name="show_city" <?php checked($displaySettings['show_city'], 'on'); ?>>
                             Show city in review list
-                        </label><br>
+                        </label>
+                        <span class="ctrw-tooltip">
+                        <span class="dashicons dashicons-editor-help"></span>
+                        <span class="tooltiptext tooltip-right-msg">This option allows the city to be displayed with each comment.</span>
+                        </span>
+                        <br>
                         <label>
                             <input type="checkbox" name="show_state" <?php checked($displaySettings['show_state'], 'on'); ?>>
                             Show state in review list
-                        </label><br>
+                        </label>
+                        <span class="ctrw-tooltip">
+                        <span class="dashicons dashicons-editor-help"></span>
+                        <span class="tooltiptext tooltip-right-msg">This option allows the state to be displayed with each comment.</span>
+                        </span>
+                        <br>
                         <label>
                             <input type="checkbox" name="enable_titles" <?php checked($displaySettings['enable_titles'], 'on'); ?>>
                             Enable review titles
-                        </label><br>
+                        </label>
+                        <span class="ctrw-tooltip">
+                        <span class="dashicons dashicons-editor-help"></span>
+                        <span class="tooltiptext tooltip-right-msg">This option allows the review title to be displayed with each comment.</span>
+                        </span>
+                        <br>
                         <label>
                             <input type="checkbox" name="show_time_with_date" <?php checked($displaySettings['show_time_with_date'], 'on'); ?>>
                             Show time with review dates
                         </label>
+                        <span class="ctrw-tooltip">
+                        <span class="dashicons dashicons-editor-help"></span>
+                        <span class="tooltiptext tooltip-right-msg">Display a time stamp behind the date on each comment.</span>
+                        </span>
                     </td>
                 </tr>
                 
