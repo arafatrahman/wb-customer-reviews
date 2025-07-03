@@ -54,13 +54,13 @@ $generalSettings = get_option('ctrw_general_settings');
                         <td>
                             <fieldset>
                                 <label>
-                                    <input type="radio" name="date_format" value="mm/dd/yyyy" <?php checked(isset($generalSettings['date_format']) ? $generalSettings['date_format'] : '', 'mm/dd/yyyy'); ?>> MM/DD/YYYY
+                                    <input type="radio" name="date_format" value="m/d/y" <?php checked(isset($generalSettings['date_format']) ? $generalSettings['date_format'] : '', 'm/d/y'); ?>> MM/DD/YYYY
                                 </label><br>
                                 <label>
-                                    <input type="radio" name="date_format" value="dd/mm/yyyy" <?php checked(isset($generalSettings['date_format']) ? $generalSettings['date_format'] : '', 'dd/mm/yyyy'); ?>> DD/MM/YYYY
+                                    <input type="radio" name="date_format" value="d/m/y" <?php checked(isset($generalSettings['date_format']) ? $generalSettings['date_format'] : '', 'd/m/y'); ?>> DD/MM/YYYY
                                 </label><br>
                                 <label>
-                                    <input type="radio" name="date_format" value="yyyy/mm/dd" <?php checked(isset($generalSettings['date_format']) ? $generalSettings['date_format'] : '', 'yyyy/mm/dd'); ?>> YYYY/MM/DD
+                                    <input type="radio" name="date_format" value="y/m/d" <?php checked(isset($generalSettings['date_format']) ? $generalSettings['date_format'] : '', 'y/m/d'); ?>> YYYY/MM/DD
                                 </label>
                             </fieldset>
                         </td>
