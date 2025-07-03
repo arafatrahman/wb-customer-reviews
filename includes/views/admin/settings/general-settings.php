@@ -14,15 +14,16 @@ $generalSettings = get_option('ctrw_general_settings');
                         <th scope="row">Display Options</th>
                         <td>
                            
+                            
+                             <label>
+                                <input type="checkbox" id="enable_review_form" name="enable_review_form" <?php checked(isset($generalSettings['enable_review_form']) && $generalSettings['enable_review_form'] === 'on'); ?>>
+                                Allow customers to submit reviews using the review form.
+                            </label><br>
                             <label>
                                 <input type="checkbox" id="enable_review_summary" name="enable_review_summary" <?php checked(isset($generalSettings['enable_review_summary']) && $generalSettings['enable_review_summary'] === 'on'); ?>>
                                 Display a summary of reviews on the site.
                             </label>
                             <br>
-                             <label>
-                                <input type="checkbox" id="enable_review_form" name="enable_review_form" <?php checked(isset($generalSettings['enable_review_form']) && $generalSettings['enable_review_form'] === 'on'); ?>>
-                                Allow customers to submit reviews using the review form.
-                            </label><br>
                             <label>
                                 <input type="checkbox" id="enable_review_list" name="enable_review_list" <?php checked(isset($generalSettings['enable_review_list']) && $generalSettings['enable_review_list'] === 'on'); ?>>
                                 Display a list of reviews on the site.

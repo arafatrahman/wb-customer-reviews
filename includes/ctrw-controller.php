@@ -610,6 +610,19 @@ class CTRW_Review_Controller {
 
             if ($update_type === 'add') {
 
+                   $insert_data = $fields;
+                  $insert_data['date'] = current_time('mysql');
+                  
+                  $result = $wpdb->insert($table_name, $insert_data);
+                  if ($result === false) {
+                        wp_send_json_error('Failed to add review: ' . $wpdb->last_error);
+                  }
+                  wp_send_json_success(['message' => 'Review added successfully', 'id' => $wpdb->insert_id]);
+
+
+            }
+            else {
+
                   $result = $wpdb->update(
                         $table_name,
                         $update_data,
@@ -620,18 +633,8 @@ class CTRW_Review_Controller {
                         wp_send_json_error('Failed to update review: ' . $wpdb->last_error);
                   }
                   wp_send_json_success('Review updated successfully');
-            }
-            else {
 
-
-                  $insert_data = $fields;
-                  $insert_data['date'] = current_time('mysql');
-                  
-                  $result = $wpdb->insert($table_name, $insert_data);
-                  if ($result === false) {
-                        wp_send_json_error('Failed to add review: ' . $wpdb->last_error);
-                  }
-                  wp_send_json_success(['message' => 'Review added successfully', 'id' => $wpdb->insert_id]);
+                 
             }
 
       }
