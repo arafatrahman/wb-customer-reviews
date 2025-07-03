@@ -7,9 +7,9 @@ class CTRW_Review_View {
     
     public function  ctrw_display_reviews($reviews, $counts, $current_status) {
 
-        
     foreach ($reviews as &$review) {
-        $post_type = get_post_type($review->positionid);
+
+        $post_type = get_post_type($review->page_id);
         $review->review_type = $post_type ? $post_type : 'unknown';
     }
 

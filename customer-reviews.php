@@ -26,4 +26,7 @@ define('CTRW_BASE_NAME', plugin_basename(__FILE__));
 define('CTRW_PLUGIN_FILE', __FILE__);
 
 // Include the main controller
+include_once CTRW_PLUGIN_PATH . 'includes/ctrw-view.php';
+include_once CTRW_PLUGIN_PATH . 'includes/ctrw-model.php';
 require_once CTRW_PLUGIN_PATH . 'includes/ctrw-controller.php';
+

@@ -3,8 +3,17 @@ if (!defined('ABSPATH')) {
     exit;
 }
 
+
+
 class CTRW_Review_Controller {
+
+    private $model;
+    private $view;
     public function __construct() {
+      
+        $this->model = new CTRW_Review_Model();
+        $this->view = new CTRW_Review_View();
+
 
         add_filter('plugin_action_links_' . CTRW_BASE_NAME, array($this, 'CTRW_plugin_action_links'));
 
@@ -12,6 +21,12 @@ class CTRW_Review_Controller {
         add_filter('plugin_row_meta', array($this, 'add_CTRW_description_link'), 10, 2);
         add_filter('plugin_row_meta', array($this, 'add_CTRW_details_link'), 10, 4);
         
+        // add screen option 
+        
+      add_filter('set-screen-option', function($status, $option, $value) {
+            return $value;
+      }, 10, 3);
+
         // Enqueue scripts and styles for the frontend
         add_action('admin_menu', [$this, 'add_admin_menu']);
         add_action('admin_enqueue_scripts', [$this,'crtw_enqueue_scripts']);
@@ -135,7 +150,15 @@ class CTRW_Review_Controller {
      
       // Display Review Settings page
       public function ctrw_display_datatable_page() {
-            echo " i am settings page";
+
+            if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['bulk_action']) && isset($_POST['review_ids'])) {
+                  $this->handle_bulk_action();
+            }
+
+            $status = isset($_GET['status']) ? sanitize_text_field($_GET['status']) : 'all';
+            $reviews = $this->model->get_reviews_by_status($status);
+            $counts = $this->model->get_review_counts();
+            $this->view->ctrw_display_reviews($reviews, $counts, $status);
       }
 
        // Display Review Settings page
@@ -153,7 +176,8 @@ class CTRW_Review_Controller {
 
 
             $screen = get_current_screen();
-            if ($screen && $screen->id == 'reviews_page_ctrw-settings') {
+            print_r( $screen );
+            if ($screen && $screen->id == 'reviews_page_ctrw-settings' || $screen->id == 'toplevel_page_ctrw-customer-reviews') {
            
                   wp_enqueue_style('ctrw-review-style', CTRW_PLUGIN_ASSETS . 'css/ctrw-admin.css', array(), '1.0.0');
                   wp_enqueue_script('ctrw-review-script', CTRW_PLUGIN_ASSETS . 'js/ctrw-admin.js', array('jquery'), '1.0.0', true);
@@ -192,6 +216,8 @@ class CTRW_Review_Controller {
                   title tinytext NOT NULL,
                   review text NOT NULL,
                   rating tinyint(1) NOT NULL,
+                  admin_reply text DEFAULT '' NOT NULL,
+                  status varchar(20) DEFAULT '' NOT NULL,
                   page_id mediumint(9) DEFAULT 0 NOT NULL,
                   date datetime DEFAULT CURRENT_TIMESTAMP NOT NULL,
                   PRIMARY KEY  (id)
@@ -452,6 +478,10 @@ class CTRW_Review_Controller {
             $rating = isset($_POST['ctrw_rating']) ? intval($_POST['ctrw_rating']) : 0;
             $ctrw_page_id = isset($_POST['ctrw_page_id']) ? intval($_POST['ctrw_page_id']) : 0;
 
+            $general_settings = get_option('ctrw_general_settings', array());
+            $status = (isset($general_settings['auto_approval']) && $general_settings['auto_approval'] === 'on') ? 'approved' : 'pending';
+           
+
             // Prepare the review data
             $review_data = array(
                   'name' => $name,
@@ -463,6 +493,7 @@ class CTRW_Review_Controller {
                   'title' => $title,
                   'review' => $review,
                   'rating' => $rating,
+                  'status' => $status,
                   'page_id' => $ctrw_page_id,
                   'date' => current_time('mysql'),
             );   
