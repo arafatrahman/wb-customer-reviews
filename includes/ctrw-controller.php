@@ -568,8 +568,9 @@ class CTRW_Review_Controller {
             $settings = get_option('ctrw_general_settings');
             if (isset($settings['admin_email_notifications']) && $settings['admin_email_notifications'] === 'on') {
 
-                $this->notify_admin_of_pending_review($review_data);
+                $this->notify_admin_of_pending_review($review_data, $review_data['email']);
             }
+
       }
 
       public function ctrw_handle_get_review_data() {
@@ -649,7 +650,7 @@ class CTRW_Review_Controller {
                   }
                   $settings = get_option('ctrw_general_settings');
                   if (isset($settings['admin_email_notifications']) && $settings['admin_email_notifications'] === 'on') {
-                   $this->notify_admin_of_pending_review($fields);
+                   $this->notify_admin_of_pending_review($fields,$fields['email']);
                   }
                   wp_send_json_success(['message' => 'Review added successfully', 'id' => $wpdb->insert_id]);
 
@@ -666,9 +667,7 @@ class CTRW_Review_Controller {
                   $settings = get_option('ctrw_general_settings');
                   if (isset($settings['admin_email_notifications']) && $settings['admin_email_notifications'] === 'on') {
                       //  exit;
-                        $this->notify_admin_of_pending_review($fields);
-                  }elseif(isset($settings['customer_email_receipts']) && $settings['customer_email_receipts'] === 'on'){
-                        $this->notify_admin_of_pending_review($fields);
+                        $this->notify_admin_of_pending_review($fields,$fields['email']);
                   }
 
                   wp_send_json_success('Review updated successfully');
@@ -827,7 +826,7 @@ class CTRW_Review_Controller {
         echo '<script type="application/ld+json">' . wp_json_encode($schema, JSON_PRETTY_PRINT | JSON_UNESCAPED_SLASHES) . '</script>';
     }
 
-    private function notify_admin_of_pending_review($review_data) {
+    private function notify_admin_of_pending_review($review_data, $customerEmail) {
         
             $admin_email = get_option('admin_email');
             $subject = sprintf(__('Customer Review Notification - %s', 'wp_cr'), $review_data['name']);
@@ -926,6 +925,23 @@ class CTRW_Review_Controller {
             if (empty($admin_email)) {
                   return; // No admin email set, exit early
             }
+            $generalSettings = get_option('ctrw_general_settings');
+            if(isset($generalSettings['customer_email_receipts']) && $settings['customer_email_receipts'] === 'on'){
+               
+            
+
+                  // Add customer email to admin notification if available and valid
+                  if (!empty($customerEmail) && is_email($customerEmail)) {
+                        if (is_array($admin_email)) {
+                        $admin_email[] = $customerEmail;
+                        } else {
+                        $admin_email = [$admin_email, $customerEmail];
+                        }
+                  }
+
+            }
+
+
             if (is_array($admin_email)) {
                   $admin_email = implode(',', $admin_email);
             }
