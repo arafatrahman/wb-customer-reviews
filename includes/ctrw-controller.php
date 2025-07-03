@@ -79,6 +79,12 @@ class CTRW_Review_Controller {
       add_action('wp_ajax_ctrw_submit_review', [$this, 'ctrw_submit_review']);
       add_action('wp_ajax_nopriv_ctrw_submit_review', [$this, 'ctrw_submit_review']);
       
+      add_action('wp_ajax_get_review_data', [$this, 'ctrw_handle_get_review_data']);
+      add_action('wp_ajax_get_review_data', [$this, 'ctrw_handle_get_review_data']);
+
+      // AJAX handler to update a review
+      add_action('wp_ajax_update_ctrw_review', [$this, 'ctrw_update_review']);
+      add_action('wp_ajax_nopriv_update_ctrw_review', [$this, 'ctrw_update_review']);
       
       }
 
@@ -507,8 +513,98 @@ class CTRW_Review_Controller {
             return $result !== false;
       }
 
+      public function ctrw_handle_get_review_data() {
+            // Check nonce for security
+            check_ajax_referer('ctrw_review_nonce', 'security');
+    
+            $review_id = intval($_POST['review_id']);
+            
+            // Get review data from database
+            global $wpdb;
+            $table_name = $wpdb->prefix . 'ctrw_reviews'; // Adjust to your table name
+            $review = $wpdb->get_row($wpdb->prepare(
+                  "SELECT * FROM $table_name WHERE id = %d", 
+                  $review_id
+            ), ARRAY_A);
+            
+            if ($review) {
+                  wp_send_json_success($review);
+            } else {
+                  wp_send_json_error('Review not found');
+            }
+
+      }
+
+      // AJAX handler to update a review
+      public function ctrw_update_review() {
+            // Check nonce for security
+            check_ajax_referer('ctrw_review_nonce', 'security');
+            if (isset($_POST['update_type']) && $_POST['update_type'] == 'update') {
+                    $review_id = isset($_POST['id']) ? intval($_POST['id']) : 0;
+                  if (!$review_id) {
+                        wp_send_json_error('Invalid review ID');
+                  }
+            }
+
+            
+
+            $fields = [
+                  'name'        => isset($_POST['name']) ? sanitize_text_field($_POST['name']) : '',
+                  'email'       => isset($_POST['email']) ? sanitize_email($_POST['email']) : '',
+                  'phone'       => isset($_POST['phone']) ? sanitize_text_field($_POST['phone']) : '',
+                  'website'     => isset($_POST['website']) ? esc_url_raw($_POST['website']) : '',
+                  'city'        => isset($_POST['city']) ? sanitize_text_field($_POST['city']) : '',
+                  'state'       => isset($_POST['state']) ? sanitize_text_field($_POST['state']) : '',
+                  'title'       => isset($_POST['title']) ? sanitize_text_field($_POST['title']) : '',
+                  'review'      => isset($_POST['review']) ? sanitize_textarea_field($_POST['review']) : '',
+                  'rating'      => isset($_POST['rating']) ? intval($_POST['rating']) : 0,
+                  'admin_reply' => isset($_POST['admin_reply']) ? sanitize_textarea_field($_POST['admin_reply']) : '',
+                  'status'      => isset($_POST['status']) ? sanitize_text_field($_POST['status']) : '',
+            ];
+
+            // Remove empty fields so we don't overwrite with blanks
+            $update_data = array_filter($fields, function($v) { return $v !== ''; });
+
+            if (empty($update_data)) {
+                  wp_send_json_error('No data to update');
+            }
+
+            global $wpdb;
+            $table_name = $wpdb->prefix . 'ctrw_reviews';
+
+
+            if (isset($_POST['update_type']) && $_POST['update_type'] == 'add') {
+                  // Prepare data for insertion
+                  $insert_data = array_filter($fields, function($v) { return $v !== ''; });
+                  $insert_data['date'] = current_time('mysql');
+                  $result = $wpdb->insert($table_name, $insert_data);
+                  if ($result !== false) {
+                        wp_send_json_success('Review added successfully');
+                  } else {
+                        wp_send_json_error('Failed to add review');
+                  }
+                
+            } else{
+                  $updated = $wpdb->update(
+                        $table_name,
+                        $update_data,
+                        ['id' => $review_id]
+                  );
+
+                  if ($updated !== false) {
+                        wp_send_json_success('Review updated successfully');
+                  } else {
+                        wp_send_json_error('Failed to update review');
+                  }
+            }
+
+
+            
+      }
+
 }
 
 
 new CTRW_Review_Controller();
 ?>
+

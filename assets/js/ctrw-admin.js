@@ -191,27 +191,50 @@
         });
 
         $('.edit-review').on('click', function() {
-        
-            $('#edit-review-id').val($(this).data('review-id'));
-            $('#update-type').val($(this).data('update-type'));
-            $('#edit-review-name').val($(this).data('review-author'));
-            $('#edit-review-email').val($(this).data('review-email'));
-            $('#edit-review-phone').val($(this).data('review-phone'));
-            $('#edit-review-website').val($(this).data('review-website'));
-            $('#edit-review-comment').val($(this).data('review-comment'));
-            $('#edit-review-city').val($(this).data('review-city'));
-            $('#edit-review-state').val($(this).data('review-state'));
-            $('#edit-review-status').val($(this).data('review-status'));
-            $('#edit-review-rating').val($(this).data('review-rating'));
-            $('#edit-review-title').val($(this).data('review-title'));
-            $('#edit-review-positionid').val($(this).data('review-positionid'));
 
-            $('#cr-edit-review-popup').show();
+         let reviewId = $(this).data('review-id');
+         // AJAX call to get review data
+            $.ajax({
+                url: ctrw_admin_ajax.ajax_url, // WordPress AJAX URL
+                type: 'POST',
+                data: {
+                    action: 'get_review_data',
+                    review_id: reviewId,
+                    security: ctrw_admin_ajax.nonce
+                },
+                success: function(response) {
+                    if(response.success) {
+                        const review = response.data;
+                        // Populate form fields
+                        $('#edit-review-id').val(review.id);
+                        $('#edit-review-name').val(review.name);
+                        $('#edit-review-email').val(review.email);
+                        $('#edit-review-website').val(review.website);
+                        $('#edit-review-phone').val(review.phone);
+                        $('#edit-review-city').val(review.city);
+                        $('#edit-review-state').val(review.state);
+                        $('#edit-review-status').val(review.status);
+                        $('#edit-review-title').val(review.title);
+                        $('#edit-review-comment').val(review.review);
+                        $('#edit-review-rating').val(review.rating);
+                        $('#edit-review-positionid').val(review.page_id);
+                        
+                        // Show the popup with the original form HTML
+                        $('#cr-edit-review-popup').show();
+                    } else {
+                        alert('Error: ' + response.data);
+                    }
+                },
+                error: function(xhr, status, error) {
+                    alert('AJAX Error: ' + error);
+                }
+            });
+
         });
 
-            $('#close-edit-review-popup').on('click', function() {
-        $('#cr-edit-review-popup').hide();
-    });
+        $('#close-edit-review-popup').on('click', function() {
+         $('#cr-edit-review-popup').hide();
+        });
 
     $('#update-customer-review').on('click', function(event) {
         
@@ -231,30 +254,29 @@
         let reviewRating = $('#edit-review-rating').val();
         let reviewTitle = $('#edit-review-title').val();
         let reviewPositionId = $('#edit-review-positionid').val();
-        
-
 
         $.ajax({
-            url: cradmin_ajax.ajax_url,
+            url: ctrw_admin_ajax.ajax_url,
             method: 'POST',
             data: {
-                action: 'edit_customer_review',
+                action: 'update_ctrw_review',
+                security: ctrw_admin_ajax.nonce,
                 id: reviewId,
                 update_type: updateType,
                 name: reviewName,
                 email: reviewEmail,
                 phone: reviewPhone,
                 website: reviewWebsite,
-                comment: reviewComment,
+                review: reviewComment,
                 city: reviewCity,
                 state: reviewState,
                 status: reviewStatus,
                 rating: reviewRating,
                 title: reviewTitle,
-                positionid: reviewPositionId
+                page_id: reviewPositionId
             },
             success: function(response) {
-                 console.log(response.data);
+                 
                 if (response.success) {
                     alert('Review updated successfully.');
                     $('#cr-edit-review-popup').hide();
@@ -270,9 +292,9 @@
         });
     });
 
-      $('#close-reply-popup').on('click', function() {
+    $('#close-reply-popup').on('click', function() {
       $('#cr-reply-popup').hide();
-      });
+    });
 
     $('#ctrw-import-form').on('submit', function(event) {
         event.preventDefault();
