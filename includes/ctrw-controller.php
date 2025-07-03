@@ -88,6 +88,9 @@ class CTRW_Review_Controller {
 
       add_action( 'add_meta_boxes', [$this, 'ctrw_add_meta_box' ]);
       add_action( 'save_post', [$this, 'ctrw_save_meta_box_data' ] );
+
+
+      add_action('wp_head', array($this, 'ctrw_output_schema_markup'));
      
 
       }
@@ -201,13 +204,13 @@ class CTRW_Review_Controller {
 
             $screen = get_current_screen();
             if ($screen && $screen->id == 'reviews_page_ctrw-settings') {
-           
                   wp_enqueue_style('ctrw-review-style', CTRW_PLUGIN_ASSETS . 'css/ctrw-admin.css', array(), '1.0.0');
                   wp_enqueue_script('ctrw-review-script', CTRW_PLUGIN_ASSETS . 'js/ctrw-admin.js', array('jquery'), '1.0.0', true);
                   wp_localize_script('ctrw-review-script', 'ctrw_admin_ajax', array(
                   'ajax_url' => admin_url('admin-ajax.php'),
                   'nonce' => wp_create_nonce('ctrw_review_nonce')
                   ));
+                  wp_enqueue_media();
                   
             }
             
@@ -778,6 +781,38 @@ class CTRW_Review_Controller {
         update_post_meta($post_id, '_enable_review_summary', isset($_POST['enable_review_summary']) ? 1 : 0);
         update_post_meta($post_id, '_ctrw_review_style', sanitize_text_field($_POST['ctrw_review_style']));
       
+    }
+
+    public function ctrw_output_schema_markup() {
+        $schemaSettings = get_option('ctrw_schema_settings');
+        if (empty($schemaSettings['enabled_schema'])) {
+        }
+
+        $review_count = $this->model->get_review_counts();
+        $average_rating = $this->model->get_average_rating();
+        
+        $schema = array(
+            '@context' => 'https://schema.org',
+            '@type' => 'LocalBusiness',
+            'name' => $schemaSettings['business_name'],
+            'image' => !empty($schemaSettings['custom_image_url']) ? $schemaSettings['custom_image_url'] : '',
+            'telephone' => isset($schemaSettings['business_phone']) ? $schemaSettings['business_phone'] : '',
+            'priceRange' => isset($schemaSettings['price_range']) ? $schemaSettings['price_range'] : '',
+            'address' => array(
+                '@type' => 'PostalAddress',
+                'streetAddress' => isset($schemaSettings['business_address']) ? $schemaSettings['business_address'] : ''
+            ),
+            'aggregateRating' => array(
+                  '@type' => 'AggregateRating',
+                  'ratingValue' => isset($average_rating) ? $average_rating : '5.0',
+                  'reviewCount' => isset($review_count['all']) ? $review_count['all'] : '1'
+            ),
+        );
+
+        print_r($schema);
+        exit;
+        
+        echo '<script type="application/ld+json">' . wp_json_encode($schema, JSON_PRETTY_PRINT | JSON_UNESCAPED_SLASHES) . '</script>';
     }
 }
 

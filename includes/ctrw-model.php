@@ -43,6 +43,16 @@ class CTRW_Review_Model {
         return $counts;
     }
 
+    function get_average_rating() {
+        global $wpdb;
+        
+        // Base query
+        $query = "SELECT AVG(rating) as average_rating FROM $this->table WHERE status = 'approved'";
+        $result = $wpdb->get_var($query);
+        
+        return $result ? round($result, 1) : 0;
+    }
+
     public function update_review_status($review_ids, $status) {
 
         $this->wpdb->query(
