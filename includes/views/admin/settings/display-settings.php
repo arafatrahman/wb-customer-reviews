@@ -17,7 +17,10 @@ $defaults = array(
     'comment_line_height' => 20,
     'star_color' => '#ffb100',
     'comment_box_color' => '#f5f5f5',
-    'review_display_type' => 'list'
+    'review_display_type' => 'list',
+    'primary_color' => '#4361ee',
+    'primary_light_color' => '#e0e7ff',
+    'secondary_color' => '#3f37c9'
 );
 
 // Merge with defaults
@@ -125,6 +128,31 @@ wp_enqueue_script('wp-color-picker');
                         <input type="text" name="comment_box_color" id="comment_box_color" 
                                value="<?php echo esc_attr($displaySettings['comment_box_color']); ?>" 
                                data-default-color="#f5f5f5" class="color-picker">
+                    </td>
+                </tr>
+
+                <tr>
+                    <th scope="row"><label for="primary_color">Primary Color</label></th>
+                    <td>
+                        <input type="text" name="primary_color" id="primary_color" 
+                               value="<?php echo esc_attr($displaySettings['primary_color']); ?>" 
+                               data-default-color="#4361ee" class="color-picker">
+                    </td>
+                </tr>
+                <tr>
+                    <th scope="row"><label for="primary_light_color">Primary Light Color</label></th>
+                    <td>
+                        <input type="text" name="primary_light_color" id="primary_light_color" 
+                               value="<?php echo esc_attr($displaySettings['primary_light_color']); ?>" 
+                               data-default-color="#e0e7ff" class="color-picker">
+                    </td>
+                </tr>
+                <tr>
+                    <th scope="row"><label for="secondary_color">Secondary Color</label></th>
+                    <td>
+                        <input type="text" name="secondary_color" id="secondary_color" 
+                               value="<?php echo esc_attr($displaySettings['secondary_color']); ?>" 
+                               data-default-color="#3f37c9" class="color-picker">
                     </td>
                 </tr>
                 

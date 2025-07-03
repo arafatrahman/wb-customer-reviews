@@ -1,7 +1,21 @@
+<?php
+global $post;
+$current_id = isset($post->ID) ? $post->ID : 0;
+
+// Get post-specific review setting
+$post_reviews_enabled = get_post_meta($current_id, '_ctrw_enable_reviews', true);
+// Get general review setting
+$generalSettings = get_option('ctrw_general_settings');
+// Check if both are enabled
+if ($post_reviews_enabled !=="1" || $generalSettings['enable_review_form'] !== 'on') {
+    // Both are enabled - do something
+    return true;
+}
+
+
+?>
 
     <div class="ctrw-container">
-       
-
         <!-- Review Form -->
         <div class="ctrw-review-form-container">
             <h3 class="ctrw-form-title">Write a Review</h3>

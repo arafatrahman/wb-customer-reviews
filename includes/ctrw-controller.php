@@ -223,12 +223,30 @@ class CTRW_Review_Controller {
 
       // Enqueue scripts and styles for the frontend
       public function crtw_wp_enqueue_scripts() {
+
             wp_enqueue_style('ctrw-review-frontend-style', CTRW_PLUGIN_ASSETS . 'css/ctrw-style.css', array(), '1.0.0');
             wp_enqueue_style('ctrw-font-awesome', 'https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css', array(), '6.4.0');
             wp_enqueue_script('ctrw-review-frontend-script', CTRW_PLUGIN_ASSETS . 'js/ctrw-frontend.js', array('jquery'), '1.0.0', true);
             
             // Localize script to pass AJAX URL and nonce
             wp_localize_script('ctrw-review-frontend-script', 'ctrw_review_form_ajax', ['ajax_url' => admin_url('admin-ajax.php') , 'nonce' => wp_create_nonce('ctrw_review_form_nonce')]);
+      
+            // Default colors
+            $displaySettings = get_option('ctrw_display_settings', array());
+            $primary_color = isset($displaySettings['primary_color']) ? $displaySettings['primary_color'] : '#4361ee';
+            $primary_light_color = isset($displaySettings['primary_light_color']) ? $displaySettings['primary_light_color'] : '#e0e7ff';
+            $secondary_color = isset($displaySettings['secondary_color']) ? $displaySettings['secondary_color'] : '#3f37c9';
+            
+            // Create inline CSS with the custom properties
+            $custom_css = ":root {
+                  --primary: {$primary_color};
+                  --primary-light: {$primary_light_color};
+                  --secondary: {$secondary_color};
+            }";
+            
+            // Add the inline style
+            wp_add_inline_style('ctrw-review-frontend-style', $custom_css);
+      
       }
 
       // Create the reviews table on plugin activation
@@ -357,7 +375,10 @@ class CTRW_Review_Controller {
       // Colors
       $settings['star_color'] = sanitize_hex_color($_POST['star_color'] ?? '#ffb100');
       $settings['comment_box_color'] = sanitize_hex_color($_POST['comment_box_color'] ?? '#f5f5f5');
-      
+      $settings['primary_color'] = sanitize_hex_color($_POST['primary_color'] ?? '#4361ee');
+      $settings['primary_light_color'] = sanitize_hex_color($_POST['primary_light_color'] ?? '#e0e7ff');
+      $settings['secondary_color'] = sanitize_hex_color($_POST['secondary_color'] ?? '#3f37c9');
+
       // Display type
       $settings['review_display_type'] = sanitize_text_field($_POST['review_display_type'] ?? 'list');
       
@@ -705,7 +726,7 @@ class CTRW_Review_Controller {
         echo __('Enable For Customer Reviews', 'wp_cr');
         echo '</label>';
         echo '</p>';
-
+        /*
         // Enable enable_review_Summary
         echo '<p>';
         echo '<label for="enable_review_summary">';
@@ -714,7 +735,7 @@ class CTRW_Review_Controller {
         echo '</label>';
         echo '</p>';
 
-      /*
+      
       // Define available review styles with their labels
       $review_styles = [
             'Review List'    => __('list', 'wp_cr'),
