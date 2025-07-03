@@ -21,11 +21,7 @@ class CTRW_Review_Controller {
         add_filter('plugin_row_meta', array($this, 'add_CTRW_description_link'), 10, 2);
         add_filter('plugin_row_meta', array($this, 'add_CTRW_details_link'), 10, 4);
         
-        // add screen option 
-        
-      add_filter('set-screen-option', function($status, $option, $value) {
-            return $value;
-      }, 10, 3);
+        //
 
         // Enqueue scripts and styles for the frontend
         add_action('admin_menu', [$this, 'add_admin_menu']);
