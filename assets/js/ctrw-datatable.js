@@ -46,8 +46,8 @@ jQuery(document).ready(function($) {
       $('.reply-now').on('click', function() {
 
             $('#reply-review-id').val($(this).data('review-id'));
-            $('#reply-review-author').text($(this).data('review-author'));
-            $('#reply-message').val($(this).data('reply-message') || '');
+            $('#reply-review-author').text($(this).data('author'));
+            $('#reply-message').val($(this).data('reply') || '');
             $('#cr-reply-popup').show();
       });
 
@@ -107,19 +107,21 @@ jQuery(document).ready(function($) {
 
             
             let selectedPlugin = $('#ctrw_import_plugin').val();
+        
             $.ajax({
-                  url: cradmin_ajax.ajax_url,
+                  url: ctrw_datatable_ajax.ajax_url,
                   method: 'POST',
                   data: {
                   action: 'ctrw_import_review_from_others',
+                  security: ctrw_datatable_ajax.nonce,
                   ctrw_import_review: selectedPlugin,
-            },
+                  },
                   success: function(response) {
-                  console.log(response);
+                  
                   if (response.success) {
                         alert('Imports completed successfully.');
                         $('#ctrw-import-popup').hide();
-                        
+                        location.reload();
                   } 
                   },
                   error: function() {
@@ -140,19 +142,24 @@ jQuery(document).ready(function($) {
             let replyMessage = $('#reply-message').val();
 
             if (!replyMessage.trim()) {
-            alert('Reply message cannot be empty.');
-            return;
+                  alert('Reply message cannot be empty.');
+                  return;
             }
 
+           
+
             $.ajax({
-            url: cradmin_ajax.ajax_url, 
-            method: 'POST',
-            data: {
+            url: ctrw_datatable_ajax.ajax_url,
+                  method: 'POST',
+                  data: {
                   action: 'save_review_reply',
+                  security: ctrw_datatable_ajax.nonce,
                   review_id: reviewId,
                   reply_message: replyMessage
-            },
+                  },
+          
             success: function(response) {
+                 
                   if (response.success) {
                         alert('Reply submitted successfully.');
                         $('#cr-reply-popup').hide();

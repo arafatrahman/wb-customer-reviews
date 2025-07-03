@@ -83,7 +83,9 @@ class CTRW_Review_Controller {
 
       // AJAX handler to update a review
       add_action('wp_ajax_update_ctrw_review', [$this, 'ctrw_update_review']);
-      
+      add_action('wp_ajax_ctrw_import_review_from_others', [$this, 'ctrw_import_reviews']);
+      add_action('wp_ajax_save_review_reply', [$this, 'ctrw_save_review_reply']);
+
       }
 
 
@@ -159,6 +161,24 @@ class CTRW_Review_Controller {
             $reviews = $this->model->get_reviews_by_status($status);
             $counts = $this->model->get_review_counts();
             $this->view->ctrw_display_reviews($reviews, $counts, $status);
+      }
+
+      // Handle bulk actions
+      private function handle_bulk_action() {
+            $action = sanitize_text_field($_POST['bulk_action']);
+            $review_ids = array_map('intval', $_POST['review_ids']);
+
+            if (!empty($review_ids)) {
+            if ($action === 'approve') {
+                  $this->model->update_review_status($review_ids, 'approved');
+            } elseif ($action === 'reject') {
+                  $this->model->update_review_status($review_ids, 'reject');
+            } elseif ($action === 'trash') {
+                  $this->model->update_review_status($review_ids, 'trash');
+            } elseif ($action === 'delete_permanently') {
+                  $this->model->delete_reviews($review_ids);
+            }
+            }
       }
 
        // Display Review Settings page
@@ -611,6 +631,40 @@ class CTRW_Review_Controller {
             }
 
       }
+
+      // Import reviews via AJAX
+    public function ctrw_import_reviews() {
+        if (!check_ajax_referer('ctrw_datatable_nonce', 'security', false)) {
+                  wp_send_json_error('Invalid nonce', 403);
+        }
+
+
+        $importPlugin = isset($_POST['ctrw_import_review']) ? sanitize_text_field($_POST['ctrw_import_review']) : '';
+        if ($importPlugin == 'siteReviews') {
+            $reviews = $this->model->import_reviews_from_site_reviews_plugin();
+            
+        }elseif ($importPlugin == 'wpCustomerReviews') {
+                $reviews = $this->model->import_reviews_from_wp_customer_reviews();
+            }
+        else {
+           wp_send_json_error(['message' => __('No reviews to import', 'wp_cr')]);
+        }
+        wp_send_json_success(['message' => __('Imported  Reviews', 'wp_cr')]);
+        
+    }
+
+    public function ctrw_save_review_reply() {
+      if (!check_ajax_referer('ctrw_datatable_nonce', 'security', false)) {
+                  wp_send_json_error('Invalid nonce', 403);
+      }
+      
+      $id = intval($_POST['review_id']);
+      $reply = sanitize_textarea_field($_POST['reply_message']);
+
+      $this->model->update_review($id, ['admin_reply' => $reply]);
+
+      wp_send_json(['success' => true, 'reply' => $reply]);
+    }
 }
 
 

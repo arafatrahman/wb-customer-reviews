@@ -10,10 +10,10 @@ if (!defined('ABSPATH')) {
       background:#fff; padding:20px; box-shadow:0 0 10px rgba(0,0,0,0.5); z-index:1000;">
       <h2>Import Customer Reviews</h2>
       <form id="ctrw-import-form">
-            <?php wp_nonce_field('exCTRW_import_reviews', 'exCTRW_import_nonce'); ?>
+         
             <p>
-                    <label for="exCTRW_import_plugin">Select Review Plugin:</label><br>
-                    <select name="exCTRW_import_plugin" id="exCTRW_import_plugin" required>
+                    <label for="ctrw_import_plugin">Select Review Plugin:</label><br>
+                    <select name="ctrw_import_plugin" id="ctrw_import_plugin" required>
                               <option value="">-- Select Plugin --</option>
 
 

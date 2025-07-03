@@ -4,7 +4,7 @@
         $class = (isset($_GET['status']) && $_GET['status'] === $key) ? 'current' : '';
     ?>
         <li class="<?= esc_attr($key) ?>">
-            <a href="?page=customer-reviews&status=<?= esc_attr($key) ?>" class="<?= esc_attr($class) ?>">
+            <a href="?page=ctrw-customer-reviews&status=<?= esc_attr($key) ?>" class="<?= esc_attr($class) ?>">
                 <?= esc_html($label) ?> <span class="count">(<?= intval($count) ?>)</span>
             </a>
         </li>
@@ -103,7 +103,7 @@
                         </td>
                         <td>
                             <?php if ($review['status'] !== 'rejected'): ?>
-                                <button type="button" class="button reply-now"
+                                <button type="button" class="button reply-now" data-reply="<?= $review['admin_reply'] ?>"  data-author="<?= $review['name'] ?>"
                                     data-review-id="<?= intval($review['id']) ?>">Reply</button>
                                     <button type="button" class="button edit-review" data-review-id="<?= intval($review['id']) ?>" data-update-type="update">
                                     Edit Review

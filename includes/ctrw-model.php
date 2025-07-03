@@ -62,7 +62,7 @@ class CTRW_Review_Model {
      * @return int The number of reviews imported.
      */
 
-    /* 
+     
     public function import_reviews_from_site_reviews_plugin() {
 
         global $wpdb;
@@ -109,10 +109,10 @@ class CTRW_Review_Model {
                     'state' => '',
                     'rating' => $data['rating'],
                     'title' => $review->post_title,
-                    'comment' => $review->post_content,
+                    'review' => $review->post_content,
                     'status' => 'approved',
-                    'positionid' => '',
-                    'created_at' => $review->post_date
+                    'page_id' => '',
+                    'date' => $review->post_date
                 ];
                 $imported++;
                 $this->ctrw_add_review($review_data);
@@ -190,11 +190,11 @@ class CTRW_Review_Model {
                     'city' => '',
                     'state' => '',
                     'title' => $title, 
-                    'comment' => $post_data->post_content,
+                    'review' => $post_data->post_content,
                     'rating' => $rating,
                     'status' => 'approved',
-                    'positionid' => $postID,
-                    'created_at' => $post_data->post_date
+                    'page_id' => $postID,
+                    'date' => $post_data->post_date
                 ];
 
                
@@ -209,7 +209,7 @@ class CTRW_Review_Model {
         return $imported;
     }
 
-    */
+    
 
     public function delete_reviews($review_ids) {
         $this->wpdb->query(
@@ -245,8 +245,7 @@ class CTRW_Review_Model {
     }
 
 
-    public function update_review($id, $data) {
-     
+    public function update_review($id, $data) {     
       return $this->wpdb->update($this->table, $data, ['id' => $id]);
     }
 
