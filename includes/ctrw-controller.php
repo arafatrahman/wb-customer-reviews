@@ -563,7 +563,13 @@ class CTRW_Review_Controller {
             global $wpdb;
             $table_name = $wpdb->prefix . 'ctrw_reviews';
             $result = $wpdb->insert($table_name, $review_data);
-            return $result !== false;
+
+            // Notify admin via email
+            $settings = get_option('ctrw_general_settings');
+            if (isset($settings['admin_email_notifications']) && $settings['admin_email_notifications'] === 'on') {
+
+                $this->notify_admin_of_pending_review($review_data);
+            }
       }
 
       public function ctrw_handle_get_review_data() {
@@ -634,12 +640,16 @@ class CTRW_Review_Controller {
 
             if ($update_type === 'add') {
 
-                   $insert_data = $fields;
+                  $insert_data = $fields;
                   $insert_data['date'] = current_time('mysql');
                   
                   $result = $wpdb->insert($table_name, $insert_data);
                   if ($result === false) {
                         wp_send_json_error('Failed to add review: ' . $wpdb->last_error);
+                  }
+                  $settings = get_option('ctrw_general_settings');
+                  if (isset($settings['admin_email_notifications']) && $settings['admin_email_notifications'] === 'on') {
+                   $this->notify_admin_of_pending_review($fields);
                   }
                   wp_send_json_success(['message' => 'Review added successfully', 'id' => $wpdb->insert_id]);
 
@@ -653,9 +663,14 @@ class CTRW_Review_Controller {
                         ['id' => $review_id]
                   );
 
-                  if ($result === false) {
-                        wp_send_json_error('Failed to update review: ' . $wpdb->last_error);
+                  $settings = get_option('ctrw_general_settings');
+                  if (isset($settings['admin_email_notifications']) && $settings['admin_email_notifications'] === 'on') {
+                      //  exit;
+                        $this->notify_admin_of_pending_review($fields);
+                  }elseif(isset($settings['customer_email_receipts']) && $settings['customer_email_receipts'] === 'on'){
+                        $this->notify_admin_of_pending_review($fields);
                   }
+
                   wp_send_json_success('Review updated successfully');
 
                  
@@ -808,11 +823,125 @@ class CTRW_Review_Controller {
                   'reviewCount' => isset($review_count['all']) ? $review_count['all'] : '1'
             ),
         );
-
-        print_r($schema);
-        exit;
         
         echo '<script type="application/ld+json">' . wp_json_encode($schema, JSON_PRETTY_PRINT | JSON_UNESCAPED_SLASHES) . '</script>';
+    }
+
+    private function notify_admin_of_pending_review($review_data) {
+        
+            $admin_email = get_option('admin_email');
+            $subject = sprintf(__('Customer Review Notification - %s', 'wp_cr'), $review_data['name']);
+
+            $site_name = get_bloginfo('name');
+            $site_url = get_site_url();
+            $time = current_time('H:i:s');
+            $date = current_time('Y-m-d');
+            $remote_ip = $_SERVER['REMOTE_ADDR'] ?? '';
+            $user_agent = $_SERVER['HTTP_USER_AGENT'] ?? '';
+
+            $advancedSettings = get_option('ctrw_advanced_settings');
+            $customMsg = isset($advancedSettings['custom_message']) ? $advancedSettings['custom_message'] : 'No message Found';
+            
+            $html_message = '
+            <div align="left">
+                  <p><font size="2" face="Verdana">Customer Review from the website ' . esc_html($site_name) . ':</font></p>
+                  <table border="0" cellspacing="1" cellpadding="3" bgcolor="silver">
+                  <tr>
+                        <td bgcolor="#f5f5f5" width="193">
+                              <div align="right">
+                              <font size="2" face="Verdana">Name :</font></div>
+                        </td>
+                        <td bgcolor="white" width="491"><font size="2" face="Verdana">' . esc_html($review_data['name']) . '</font></td>
+                  </tr>
+                  <tr>
+                        <td bgcolor="#f5f5f5" width="193">
+                              <div align="right">
+                              <font size="2" face="Verdana">Email :</font></div>
+                        </td>
+                        <td bgcolor="white" width="491"><font size="2" face="Verdana">' . esc_html($review_data['email']) . '</font></td>
+                  </tr>
+                  <tr>
+                        <td bgcolor="#f5f5f5" width="193">
+                              <div align="right">
+                              <font size="2" face="Verdana">Website :</font></div>
+                        </td>
+                        <td bgcolor="white" width="491"><font size="2" face="Verdana">' . esc_html($review_data['website']) . '</font></td>
+                  </tr>
+                  <tr>
+                        <td bgcolor="#f5f5f5" width="193">
+                              <div align="right">
+                              <font size="2" face="Verdana">Phone :</font></div>
+                        </td>
+                        <td bgcolor="white" width="491"><font size="2" face="Verdana">' . esc_html($review_data['phone']) . '</font></td>
+                  </tr>
+                  <tr>
+                        <td bgcolor="#f5f5f5" width="193">
+                              <div align="right">
+                              <font size="2" face="Verdana">City :</font></div>
+                        </td>
+                        <td bgcolor="white" width="491"><font size="2" face="Verdana">' . esc_html($review_data['city']) . '</font></td>
+                  </tr>
+                  <tr>
+                        <td bgcolor="#f5f5f5" width="193">
+                              <div align="right"><font size="2" face="Verdana">State :</font></div>
+                        </td>
+                        <td bgcolor="white" width="491"><font size="2" face="Verdana">' . esc_html($review_data['state']) . '</font></td>
+                  </tr>
+                  <tr>
+                        <td bgcolor="#f5f5f5" width="193">
+                              <div align="right"><font size="2" face="Verdana">Review Title :</font></div>
+                        </td>
+                        <td bgcolor="white" width="491"><font size="2" face="Verdana">' . (isset($review_data['title']) ? esc_html($review_data['title']) : '') . '</font></td>
+                  </tr>
+                  <tr>
+                        <td valign="top" bgcolor="#f5f5f5" width="193">
+                              <div align="right">
+                              <font size="2" face="Verdana">Comment :</font></div>
+                        </td>
+                        <td valign="top" bgcolor="white" width="491"><font size="2" face="Verdana">' . esc_html($review_data['review']) . '</font></td>
+                  </tr>
+                  <tr>
+                        <td valign="top" bgcolor="#f5f5f5" width="193">
+                              <div align="right">
+                              <font size="2" face="Verdana">Rating :</font></div>
+                        </td>
+                        <td valign="top" bgcolor="white" width="491"><font size="2" face="Verdana">' . esc_html($review_data['rating']) . '</font></td>
+                  </tr>
+
+                  <tr>
+                        <td valign="top" bgcolor="#f5f5f5" width="193">
+                              <div align="right">
+                              <font size="2" face="Verdana">Custom Messages:</font></div>
+                        </td>
+                        <td valign="top" bgcolor="white" width="491"><font size="2" face="Verdana">' . esc_html($customMsg) . '</font></td>
+                  </tr>
+                  </table>
+                  <p><font size="2" face="Verdana">This e-mail was sent from a review form found on ' . esc_html($site_name) . ' website ' . esc_url($site_url) . '</font></p>
+                  <p><font size="2" face="Verdana">Submission Details: ' . esc_html($time) . ', ' . esc_html($date) . ', ' . esc_html($remote_ip) . ', ' . esc_html($user_agent) . '</font></p>
+                  <p><font size="2" color="gray" face="Verdana">Notification Form Created by <a href="https://wordpress.org/plugins/customer-comments/" target="_blank">Customer Comments</a></font></p>
+            </div>
+            ';
+            $settings = get_option('ctrw_advanced_settings');
+            $admin_email = $settings['admin_emails'] ?? get_option('admin_email');
+            if (empty($admin_email)) {
+                  return; // No admin email set, exit early
+            }
+            if (is_array($admin_email)) {
+                  $admin_email = implode(',', $admin_email);
+            }
+            if (strpos($admin_email, ',') !== false) {
+                  $admin_email = array_map('trim', explode(',', $admin_email));
+            }
+            // Use default wp_mail() with standard headers so plugins like WP Mail SMTP work seamlessly
+            $headers = [
+                  'Content-Type: text/html; charset=UTF-8',
+                  'From: ' . esc_html($site_name) . ' <' . esc_html($admin_email) . '>',
+                  'Reply-To: ' . esc_html($review_data['email']),
+            ];
+            $headers = implode("\r\n", $headers);
+            wp_mail($admin_email, $subject, $html_message, $headers);
+
+        
     }
 }
 
