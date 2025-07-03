@@ -172,7 +172,6 @@ class CTRW_Review_Controller {
 
 
             $screen = get_current_screen();
-            print_r( $screen );
             if ($screen && $screen->id == 'reviews_page_ctrw-settings' || $screen->id == 'toplevel_page_ctrw-customer-reviews') {
            
                   wp_enqueue_style('ctrw-review-style', CTRW_PLUGIN_ASSETS . 'css/ctrw-admin.css', array(), '1.0.0');
