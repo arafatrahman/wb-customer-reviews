@@ -86,6 +86,10 @@ class CTRW_Review_Controller {
       add_action('wp_ajax_ctrw_import_review_from_others', [$this, 'ctrw_import_reviews']);
       add_action('wp_ajax_save_review_reply', [$this, 'ctrw_save_review_reply']);
 
+      add_action( 'add_meta_boxes', [$this, 'ctrw_add_meta_box' ]);
+      add_action( 'save_post', [$this, 'ctrw_save_meta_box_data' ] );
+     
+
       }
 
 
@@ -664,6 +668,92 @@ class CTRW_Review_Controller {
       $this->model->update_review($id, ['admin_reply' => $reply]);
 
       wp_send_json(['success' => true, 'reply' => $reply]);
+    }
+
+        // Add meta box to the review post type
+    public function ctrw_add_meta_box() {
+        add_meta_box(
+            'ctrw_meta_box',
+            __('Customer Reviews', 'wp_ctrw'),
+            [$this, 'render_ctrw_meta_box'],
+            ['post', 'page'], // Post types
+            'side',                      // Context: 'side' places it on the right
+            'high'                       // Priority
+        );
+    }
+
+    // Render the meta box content
+    public function render_ctrw_meta_box($post) {
+
+        // Retrieve current settings
+        $settings = [
+            'enable_reviews'      => get_post_meta($post->ID, '_ctrw_enable_reviews', true),
+            'enable_review_summary'  => get_post_meta($post->ID, '_enable_review_summary', true),
+            'review_style'  => get_post_meta($post->ID, '_ctrw_review_style', true),
+        ];
+
+        // Add nonce field for security
+        wp_nonce_field('ctrw_meta_box_nonce', 'ctrw_meta_box_nonce');
+
+        // Enable customer reviews option
+        echo '<p>';
+        echo '<label for="enable_reviews">';
+        echo '<input type="checkbox" id="enable_reviews" name="enable_reviews" value="1" ' . checked(1, isset($settings['enable_reviews']) ? $settings['enable_reviews'] : 1, false) . ' />';
+        echo __('Enable For Customer Reviews', 'wp_cr');
+        echo '</label>';
+        echo '</p>';
+
+        // Enable enable_review_Summary
+        echo '<p>';
+        echo '<label for="enable_review_summary">';
+        echo '<input type="checkbox" id="enable_review_summary" name="enable_review_summary" value="1" ' . checked(1, isset($settings['enable_review_summary']) ? $settings['enable_review_summary'] : 1, false) . ' />';
+        echo __('Show Customer Reviews Summary', 'wp_cr');
+        echo '</label>';
+        echo '</p>';
+
+      /*
+      // Define available review styles with their labels
+      $review_styles = [
+            'Review List'    => __('list', 'wp_cr'),
+            'Review Slider'  => __('slider', 'wp_cr'),
+            'Review Floating'=> __('floating', 'wp_cr'),
+      ];
+
+      // Get the currently selected style, default to 'list' if not set
+      $selected_style = isset($settings['review_style']) ? $settings['review_style'] : 'list';
+
+      echo '<p>';
+      echo '<label for="ctrw_review_style">';
+      echo __('Review Style:', 'wp_cr') . ' ';
+
+      // Output the select dropdown for review style
+      echo '<select id="ctrw_review_style" name="ctrw_review_style">';
+      foreach ($review_styles as $value => $label) {
+            // Mark the option as selected if it matches the saved value
+            echo '<option value="' . esc_attr($value) . '"' . selected($selected_style, $value, false) . '>' . esc_html($label) . '</option>';
+      }
+      echo '</select>';
+      echo '</label>';
+      echo '</p>';
+      */
+    }
+    // Save meta box data
+    public function ctrw_save_meta_box_data($post_id) {
+        // Check nonce for security
+        if (!isset($_POST['ctrw_meta_box_nonce']) || !wp_verify_nonce($_POST['ctrw_meta_box_nonce'], 'ctrw_meta_box_nonce')) {
+            return;
+        }
+
+        // Check if the user has permission to save data
+        if (!current_user_can('edit_post', $post_id)) {
+            return;
+        }
+
+        // Save the settings as post meta for this post/page only
+        update_post_meta($post_id, '_ctrw_enable_reviews', isset($_POST['enable_reviews']) ? 1 : 0);
+        update_post_meta($post_id, '_enable_review_summary', isset($_POST['enable_review_summary']) ? 1 : 0);
+        update_post_meta($post_id, '_ctrw_review_style', sanitize_text_field($_POST['ctrw_review_style']));
+      
     }
 }
 
