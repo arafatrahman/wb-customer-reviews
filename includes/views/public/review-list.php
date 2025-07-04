@@ -69,7 +69,11 @@ $dynamic_styles = "
 <div class="ctrw-review-card">
     <!-- Standard List View -->
     <div class="ctrw-review-list standard">
-        <?php foreach ($reviews as $review) : 
+        <?php 
+        
+            $reviews_per_page = $settings['reviews_per_page'] ?? 10;
+            $reviews = array_slice($reviews, 0, $reviews_per_page);
+            foreach ($reviews as $review) : 
             // Handle both array and object access
             $review_data = (array) $review;
             

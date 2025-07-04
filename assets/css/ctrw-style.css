@@ -251,7 +251,6 @@
            
             padding: 20px 0;
             position: relative;
-            max-width: 45%;
         }
 
         .ctrw-review-slider {
@@ -268,11 +267,11 @@
 
 
         .ctrw-review-slide {
-            flex: 0 0 300px;
+            flex: 0 0 225px;
             scroll-snap-align: start;
             background: white;
             border-radius: var(--border-radius);
-           
+            width: 130px;
             padding: 35px;
             transition: var(--transition);
         }

@@ -235,8 +235,8 @@ class CTRW_Review_Model {
         return $this->wpdb->get_results("SELECT * FROM {$this->table} WHERE status = '$status' ORDER BY date DESC");
     }
     public function get_review_by_id($id) {
-      //  return $this->wpdb->get_results("SELECT * FROM {$this->table} WHERE page_id = $id ORDER BY date DESC");
-        return $this->wpdb->get_row($this->wpdb->prepare("SELECT * FROM $this->table WHERE page_id = %d", $id));
+       return $this->wpdb->get_results("SELECT * FROM {$this->table} WHERE page_id = $id ORDER BY date DESC");
+     //  return $this->wpdb->get_row($this->wpdb->prepare("SELECT * FROM $this->table WHERE page_id = %d", $id));
     }
     public function get_review_count_by_positionid($positionid) {
         $count = $this->wpdb->get_var(
