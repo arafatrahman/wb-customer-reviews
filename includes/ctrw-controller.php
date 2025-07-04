@@ -92,6 +92,10 @@ class CTRW_Review_Controller {
 
       add_action('wp_head', array($this, 'ctrw_output_schema_markup'));
      
+      // Hook to display under product titles - adjust priority as needed
+      add_action('woocommerce_after_shop_loop_item_title', array($this, 'ctrw_display_product_review_info'), 15);
+      add_action('woocommerce_single_product_summary', array($this, 'ctrw_display_product_review_info'), 7);
+
 
       }
 
@@ -381,10 +385,7 @@ class CTRW_Review_Controller {
       $settings['primary_color'] = sanitize_hex_color($_POST['primary_color'] ?? '#4361ee');
       $settings['primary_light_color'] = sanitize_hex_color($_POST['primary_light_color'] ?? '#e0e7ff');
       $settings['secondary_color'] = sanitize_hex_color($_POST['secondary_color'] ?? '#3f37c9');
-
-      // Display type
-      $settings['review_display_type'] = sanitize_text_field($_POST['review_display_type'] ?? 'list');
-      
+ 
       // Save settings
       update_option('ctrw_display_settings', $settings);
       
@@ -945,7 +946,81 @@ class CTRW_Review_Controller {
 
         
     }
+
+      // Function to display review info under product titles
+      public function ctrw_display_product_review_info() {
+            global $post;
+            
+            // Only run for products
+            if (!is_a($post, 'WP_Post') || $post->post_type !== 'product') {
+                  return;
+            }
+
+            $woocommerceSettings = get_option('ctrw_woocommerce_settings', array());
+            if(!isset($woocommerceSettings['show_on_product_pages']) && $woocommerceSettings['show_on_product_pages'] != 'on'){
+                  return;
+            }
+            
+            $current_id = isset($post->ID) ? $post->ID : 0;
+
+            // Get reviews - ensure it returns an array
+            $reviews = (new CTRW_Review_Model())->get_review_by_id($current_id);
+
+            // Calculate rating statistics
+            $total_reviews = count($reviews);
+            $total_rating = 0;
+            
+            foreach ($reviews as $review) {
+                  $review_data = (array) $review;
+                  $rating = (int) $review_data['rating'];
+                  if ($rating >= 1 && $rating <= 5) {
+                        $total_rating += $rating;
+                  }
+            }
+            
+            $average_rating = $total_reviews > 0 ? round($total_rating / $total_reviews, 1) : 0;
+            
+            // Get display settings
+            $displaySettings = get_option('ctrw_display_settings', []);
+            $star_color = $displaySettings['star_color'] ?? '#ffb100';
+            
+            // Generate stars HTML
+            $stars_html = '';
+            if ($total_reviews > 0) {
+                  $full_stars = floor($average_rating);
+                  $has_half_star = ($average_rating - $full_stars) >= 0.5;
+                  
+                  for ($i = 1; $i <= 5; $i++) {
+                        if ($i <= $full_stars) {
+                        $stars_html .= '<i class="fas fa-star" style="color:' . esc_attr($star_color) . '"></i>';
+                        } elseif ($i == $full_stars + 1 && $has_half_star) {
+                        $stars_html .= '<i class="fas fa-star-half-alt" style="color:' . esc_attr($star_color) . '"></i>';
+                        } else {
+                        $stars_html .= '<i class="far fa-star" style="color:' . esc_attr($star_color) . '"></i>';
+                        }
+                  }
+            }
+            
+            // Output the review info
+            if ($total_reviews > 0) {
+                  echo '<div class="ctrw-product-review-summary" style="margin: 5px 0 10px; font-size: 14px;">';
+                  echo '<div class="ctrw-review-stars" style="display: inline-block; margin-right: 5px;">' . $stars_html . '</div>';
+                  echo '<span class="ctrw-review-average" style="font-weight: bold; margin-right: 5px;">' . number_format($average_rating, 1) . '</span>';
+                  echo '<span class="ctrw-review-count">(' . $total_reviews . ' ' . ($total_reviews === 1 ? 'review' : 'reviews') . ')</span>';
+                  echo '</div>';
+            } else {
+                  echo '<div class="ctrw-product-review-summary" style="margin: 5px 0 10px; font-size: 14px; color: #666;">';
+                  echo 'No reviews yet';
+                  echo '</div>';
+            }
+      }
+
+
+
+
 }
+
+
 
 
 new CTRW_Review_Controller();

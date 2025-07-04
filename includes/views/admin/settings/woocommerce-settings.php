@@ -14,18 +14,16 @@ $woocommerceSettings = get_option('ctrw_woocommerce_settings', array());
                     <tr>
                         <th scope="row">WooCommerce Integration</th>
                         <td>
-                            <label>
-                                <input type="checkbox" name="replace_woo_reviews" <?php checked(isset($woocommerceSettings['replace_woo_reviews']) && $woocommerceSettings['replace_woo_reviews'] === 'on'); ?>>
-                                Replace WooCommerce default review system
-                            </label><br>
+   
                             <label>
                                 <input type="checkbox" name="show_on_product_pages" <?php checked(isset($woocommerceSettings['show_on_product_pages']) && $woocommerceSettings['show_on_product_pages'] === 'on'); ?>>
                                 Show reviews on product pages
                             </label><br>
                             <label>
-                                <input type="checkbox" name="verified_purchasers_only" <?php checked(isset($woocommerceSettings['verified_purchasers_only']) && $woocommerceSettings['verified_purchasers_only'] === 'on'); ?>>
-                                Allow reviews only from verified purchasers
-                            </label>
+                                <input type="checkbox" name="review_summary" <?php checked(isset($woocommerceSettings['review_summary']) && $woocommerceSettings['review_summary'] === 'on'); ?>>
+                                Show Review Summary
+                            </label><br>
+                            
                         </td>
                     </tr>
                     
@@ -40,6 +38,18 @@ $woocommerceSettings = get_option('ctrw_woocommerce_settings', array());
                             </select>
                         </td>
                     </tr>
+
+                        <tr>
+                            <th scope="row"><label for="review_display_type">Reviews display style</label></th>
+                            <td>
+                                <select name="review_display_type" id="review_display_type" class="regular-text">
+                                    <option value="list" <?php selected(isset($woocommerceSettings['review_display_type']) ? $woocommerceSettings['review_display_type'] : '', 'list'); ?>>List Review</option>
+                                    <option value="slider" <?php selected(isset($woocommerceSettings['review_display_type']) ? $woocommerceSettings['review_display_type'] : '', 'slider'); ?>>Review Slider</option>
+                                    <option value="floating" <?php selected(isset($woocommerceSettings['review_display_type']) ? $woocommerceSettings['review_display_type'] : '', 'floating'); ?>>Review Widget</option>
+                                </select>
+                                <p id="review_display_info"></p>
+                            </td>
+                        </tr>
                 </tbody>
             </table>
             

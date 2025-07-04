@@ -115,17 +115,7 @@ wp_enqueue_script('wp-color-picker');
                             </td>
                         </tr>
                         
-                        <tr>
-                            <th scope="row"><label for="review_display_type">Reviews display style</label></th>
-                            <td>
-                                <select name="review_display_type" id="review_display_type" class="regular-text">
-                                    <option value="list" <?php selected($displaySettings['review_display_type'], 'list'); ?>>List Review</option>
-                                    <option value="slider" <?php selected($displaySettings['review_display_type'], 'slider'); ?>>Review Slider</option>
-                                    <option value="floating" <?php selected($displaySettings['review_display_type'], 'floating'); ?>>Review Widget</option>
-                                </select>
-                                <p id="review_display_info"></p>
-                            </td>
-                        </tr>
+
                     </tbody>
                 </table>
             </div>

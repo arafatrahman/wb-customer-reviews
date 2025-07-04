@@ -4,7 +4,7 @@ global $post;
 $current_id = isset($post->ID) ? $post->ID : 0;
 
 // Get reviews - ensure it returns an array
-$reviews = (new CTRW_Review_Model())->get_review_by_id($current_id);
+$reviews = (new CTRW_Review_Model())->get_reviews_by_status("approved");
 // [Keep all the existing PHP code from your list view until the display settings]
 
 // Calculate rating statistics
