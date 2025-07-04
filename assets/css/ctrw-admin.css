@@ -84,3 +84,19 @@ span.tooltiptext.tooltip-right-msg {
      opacity: 1;
  }
 
+.ctrw-two-column-settings {
+    display: flex;
+    flex-wrap: wrap;
+    width: 80%;
+}
+
+.ctrw-settings-column {
+    flex: 1;
+    min-width: 300px;
+}
+
+@media (max-width: 782px) {
+    .ctrw-settings-column {
+        min-width: 100%;
+    }
+}
