@@ -1,86 +1,156 @@
-<!-- Floating View (will be triggered by button) -->
-<div class="ctrw-review-list floating">
-    <!-- Content will be shown in floating panel -->
-</div>
-    
-<!-- Floating Review Button -->
-<div class="ctrw-floating-review-btn" id="ctrw-floatingBtn">
-    <i class="fa-regular fa-star"></i>
-</div>
+<?php
+// Get current post, page, or product ID
+global $post;
+$current_id = isset($post->ID) ? $post->ID : 0;
 
-<!-- Floating Review List -->
+// Get reviews - ensure it returns an array
+$reviews = (new CTRW_Review_Model())->get_review_by_id($current_id);
+
+// Get display settings with defaults
+$settings = get_option('ctrw_general_settings', []);
+$displaySettings = get_option('ctrw_display_settings', []);
+
+// Set default values if not exists
+$defaults = [
+    'name_font_weight' => 'normal',
+    'comment_font_size' => '14',
+    'comment_font_style' => 'normal',
+    'comment_line_height' => '20',
+    'comment_box_color' => '#f5f5f5',
+    'star_color' => '#ffb100',
+    'show_time_with_date' => '',
+    'show_city' => '',
+    'show_state' => ''
+];
+
+$displaySettings = wp_parse_args($displaySettings, $defaults);
+
+// Date format settings
+$date_format = $settings['date_format'] ?? 'm/d/Y';
+$showTimeDate = $displaySettings['show_time_with_date'] == 'on';
+
+// Location display settings
+$showCity = $displaySettings['show_city'] == 'on';
+$showState = $displaySettings['show_state'] == 'on';
+
+// If time display is enabled, append time format to date format
+if ($showTimeDate) {
+    $date_format .= ' h:i A';
+}
+
+// If we get a single review object instead of array, convert it to an array of one item
+if (is_object($reviews)) {
+    $reviews = [$reviews];
+} elseif (!is_array($reviews)) {
+    $reviews = [];
+}
+
+// Generate dynamic styles based on settings
+$dynamic_styles = "
+    .ctrw-review-item {
+        background-color: {$displaySettings['comment_box_color']};
+        line-height: {$displaySettings['comment_line_height']}px;
+    }
+    .ctrw-reviewer-name {
+        font-weight: {$displaySettings['name_font_weight']};
+    }
+    .ctrw-review-text {
+        font-size: {$displaySettings['comment_font_size']}px;
+        font-style: {$displaySettings['comment_font_style']};
+    }
+    .ctrw-stars .fas.fa-star {
+        color: {$displaySettings['star_color']};
+    }
+";
+?>
+<style><?php echo $dynamic_styles; ?></style>
+
+
+<?php if (!empty($reviews)) : ?>
+<div class="ctrw-review-card">
+    <!-- Floating Review Button -->
+    <div class="ctrw-floating-review-btn" id="ctrw-floatingBtn">
+        <i class="fa-regular fa-star"></i>
+        <span class="ctrw-floating-badge"></span>
+    </div>
+
+    <!-- Floating Review List -->
     <div class="ctrw-floating-review-container" id="ctrw-floatingReviews">
         <div class="ctrw-floating-review-header">
             <h3>Recent Reviews</h3>
             <button class="ctrw-close-floating" id="ctrw-closeFloating">&times;</button>
         </div>
         
+        <?php 
+        $reviews_per_page = $settings['reviews_per_page'] ?? 10;
+        $reviews = array_slice($reviews, 0, $reviews_per_page);
+        foreach ($reviews as $review) : 
+            // Handle both array and object access
+            $review_data = (array) $review;
+            
+            // Format the date according to settings
+            $review_date = date($date_format, strtotime($review_data['date']));
+            
+            // Get initials for avatar
+            $name_parts = explode(' ', $review_data['name']);
+            $initials = '';
+            foreach ($name_parts as $part) {
+                if (!empty($part)) {
+                    $initials .= strtoupper(substr($part, 0, 1));
+                }
+            }
+            $initials = substr($initials, 0, 2);
+            
+            // Generate stars based on rating
+            $stars = '';
+            $full_stars = (int) $review_data['rating'];
+            $empty_stars = 5 - $full_stars;
+            
+            for ($i = 0; $i < $full_stars; $i++) {
+                $stars .= '<i class="fas fa-star"></i>';
+            }
+            for ($i = 0; $i < $empty_stars; $i++) {
+                $stars .= '<i class="far fa-star"></i>';
+            }
+            
+            // Prepare location information if enabled
+            $location_parts = [];
+            if ($showCity && !empty($review_data['city'])) {
+                $location_parts[] = esc_html($review_data['city']);
+            }
+            if ($showState && !empty($review_data['state'])) {
+                $location_parts[] = esc_html($review_data['state']);
+            }
+            $location = implode(', ', $location_parts);
+        ?>
         <div class="ctrw-floating-review-item">
             <div class="ctrw-floating-reviewer">
-                <div class="ctrw-floating-avatar">JD</div>
+                <div class="ctrw-floating-avatar"><?php echo $initials; ?></div>
                 <div class="ctrw-stars">
-                    <i class="fas fa-star"></i>
-                    <i class="fas fa-star"></i>
-                    <i class="fas fa-star"></i>
-                    <i class="fas fa-star"></i>
-                    <i class="fas fa-star"></i>
+                    <?php echo $stars; ?>
                 </div>
             </div>
             <div class="ctrw-floating-review-content">
-                <div class="ctrw-floating-review-title">Excellent product!</div>
-                <div class="ctrw-floating-review-text">Exceeded all my expectations. Quality is outstanding.</div>
-            </div>
-        </div>
-        
-        <div class="ctrw-floating-review-item">
-            <div class="ctrw-floating-reviewer">
-                <div class="ctrw-floating-avatar">AS</div>
-                <div class="ctrw-stars">
-                    <i class="fas fa-star"></i>
-                    <i class="fas fa-star"></i>
-                    <i class="fas fa-star"></i>
-                    <i class="fas fa-star"></i>
-                    <i class="far fa-star"></i>
+               <div class="ctrw-floating-review-meta">
+                    <span class="ctrw-floating-reviewer-name"><?php echo esc_html($review_data['name']); ?></span>
+                    <?php if (!empty($location)) : ?>
+                        <span class="ctrw-floating-review-location"><?php echo $location; ?></span>
+                    <?php endif; ?>
+                    <span class="ctrw-floating-review-date"><?php echo $review_date; ?></span>
                 </div>
-            </div>
-            <div class="ctrw-floating-review-content">
-                <div class="ctrw-floating-review-title">Very good product</div>
-                <div class="ctrw-floating-review-text">Works well, though instructions could be clearer.</div>
-            </div>
-        </div>
-        
-        <div class="ctrw-floating-review-item">
-            <div class="ctrw-floating-reviewer">
-                <div class="ctrw-floating-avatar">RJ</div>
-                <div class="ctrw-stars">
-                    <i class="fas fa-star"></i>
-                    <i class="fas fa-star"></i>
-                    <i class="fas fa-star"></i>
-                    <i class="far fa-star"></i>
-                    <i class="far fa-star"></i>
+                <?php if (!empty($review_data['title'])) : ?>
+                    <div class="ctrw-floating-review-title"><?php echo esc_html($review_data['title']); ?></div>
+                <?php endif; ?>
+                <div class="ctrw-floating-review-text">
+                    <?php echo esc_html($review_data['review']); ?>
                 </div>
-            </div>
-            <div class="ctrw-floating-review-content">
-                <div class="ctrw-floating-review-title">Average experience</div>
-                <div class="ctrw-floating-review-text">Okay for the price, but seen better quality elsewhere.</div>
-            </div>
-        </div>
-        
-        <div class="ctrw-floating-review-item">
-            <div class="ctrw-floating-reviewer">
-                <div class="ctrw-floating-avatar">EM</div>
-                <div class="ctrw-stars">
-                    <i class="fas fa-star"></i>
-                    <i class="fas fa-star"></i>
-                    <i class="fas fa-star"></i>
-                    <i class="fas fa-star"></i>
-                    <i class="fas fa-star"></i>
-                </div>
-            </div>
-            <div class="ctrw-floating-review-content">
-                <div class="ctrw-floating-review-title">Perfect!</div>
-                <div class="ctrw-floating-review-text">Exactly as described and works perfectly.</div>
-            </div>
-        </div>
 
-    </div>       
+            </div>
+        </div>
+        <?php endforeach; ?>
+    </div>
+</div>
+
+<?php else : ?>
+    <p class="ctrw-no-reviews">No reviews yet.</p>
+<?php endif; ?>
