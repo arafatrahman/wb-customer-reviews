@@ -1,4 +1,35 @@
- // Rating stars interaction
+        
+        
+    jQuery(document).ready(function($) {
+        $('#ctrw-reviewForm').on('submit', function(e) {
+            e.preventDefault();
+            let formData = $(this).serialize();
+            // Add security nonce
+            formData += '&security=' + ctrw_review_form_ajax.nonce;
+            // Add action
+            formData += '&action=ctrw_submit_review';
+            // Show loading indicator
+            $('.ctrw-save-btn').prop('disabled', true).text('Submiting...');
+
+            // AJAX request
+            $.ajax({
+            type: 'POST',
+            url: ctrw_review_form_ajax.ajax_url,
+            data: formData,
+            dataType: 'json',
+            success: function(data) {
+                alert('Thank you for your review!');
+                $('#ctrw-reviewForm')[0].reset();
+            }
+            });
+        });
+    });
+
+
+        
+        
+        
+        // Rating stars interaction
         const ctrwStars = document.querySelectorAll('.ctrw-star');
         const ctrwRatingInput = document.getElementById('ctrw-rating');
         
@@ -154,28 +185,5 @@
         ctrwReviewLists.slider.style.display = 'none';
         ctrwReviewLists.floating.style.display = 'none';
         // AJAX form submission for review form
-    jQuery(document).ready(function($) {
-        $('#ctrw-reviewForm').on('submit', function(e) {
-            e.preventDefault();
-            let formData = $(this).serialize();
-            // Add security nonce
-            formData += '&security=' + ctrw_review_form_ajax.nonce;
-            // Add action
-            formData += '&action=ctrw_submit_review';
-            // Show loading indicator
-            $('.ctrw-save-btn').prop('disabled', true).text('Submiting...');
 
-            // AJAX request
-            $.ajax({
-            type: 'POST',
-            url: ctrw_review_form_ajax.ajax_url,
-            data: formData,
-            dataType: 'json',
-            success: function(data) {
-                alert('Thank you for your review!');
-                $('#ctrw-reviewForm')[0].reset();
-            }
-            });
-        });
-    });
 
