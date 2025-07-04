@@ -242,9 +242,9 @@ class CTRW_Review_Controller {
             
             // Create inline CSS with the custom properties
             $custom_css = ":root {
-                  --primary: {$primary_color};
-                  --primary-light: {$primary_light_color};
-                  --secondary: {$secondary_color};
+                  --ctrw-primary: {$primary_color};
+                  --ctrw-primary-light: {$primary_light_color};
+                  --ctrw-secondary: {$secondary_color};
             }";
             
             // Add the inline style

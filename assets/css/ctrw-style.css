@@ -25,7 +25,7 @@
 
         .ctrw-review-header {
             padding: 24px;
-            background: linear-gradient(135deg, var(--primary), var(--secondary));
+            background: linear-gradient(135deg, var(--ctrw-primary), var(--ctrw-secondary));
             color: white;
             display: flex;
             justify-content: space-between;
@@ -67,7 +67,7 @@
         }
 
         .ctrw-view-option.active {
-            background: var(--primary);
+            background: var(--ctrw-primary);
             color: white;
         }
 
@@ -198,8 +198,8 @@
             width: 48px;
             height: 48px;
             border-radius: 50%;
-            background: var(--primary-light);
-            color: var(--primary);
+            background: var(--ctrw-primary-light);
+            color: var(--ctrw-primary);
             display: flex;
             align-items: center;
             justify-content: center;
@@ -299,7 +299,7 @@
         }
 
         .ctrw-slider-dot.active {
-            background: var(--primary);
+            background: var(--ctrw-primary);
             transform: scale(1.2);
         }
 
@@ -316,7 +316,7 @@
             width: 60px;
             height: 60px;
             border-radius: 50%;
-            background: linear-gradient(135deg, var(--primary), var(--secondary));
+            background: linear-gradient(135deg, var(--ctrw-primary), var(--ctrw-secondary));
             color: white;
             display: flex;
             align-items: center;
@@ -397,8 +397,8 @@
             width: 30px;
             height: 30px;
             border-radius: 50%;
-            background: var(--primary-light);
-            color: var(--primary);
+            background: var(--ctrw-primary-light);
+            color: var(--ctrw-primary);
             display: flex;
             align-items: center;
             justify-content: center;
@@ -463,8 +463,8 @@
 
         .ctrw-form-control:focus {
             outline: none;
-            border-color: var(--primary);
-            box-shadow: 0 0 0 3px var(--primary-light);
+            border-color: var(--ctrw-primary);
+            box-shadow: 0 0 0 3px var(--ctrw-primary-light);
         }
 
         textarea.ctrw-form-control {
@@ -494,7 +494,7 @@
         }
 
         .ctrw-submit-btn {
-            background: linear-gradient(135deg, var(--primary), var(--secondary));
+            background: linear-gradient(135deg, var(--ctrw-primary), var(--ctrw-secondary));
             color: white;
             border: none;
             padding: 14px 28px;
